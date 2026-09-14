@@ -378,8 +378,10 @@ def markdown_table(frame: pd.DataFrame, columns: list[str], limit: int = 12) -> 
     data = frame.loc[:, [column for column in columns if column in frame]].head(limit).copy()
     for column in data.columns:
         if pd.api.types.is_float_dtype(data[column]):
-            if "flow" in column or "amount" in column:
+            if column == "estimated_net_flow" or column.endswith("_amount") or column == "main_net_10d":
                 data[column] = data[column].map(lambda x: f"{x / 1e8:.2f}亿" if pd.notna(x) else "")
+            elif "ratio" in column or "return" in column or "rate" in column:
+                data[column] = data[column].map(lambda x: f"{x:.2%}" if pd.notna(x) else "")
             else:
                 data[column] = data[column].map(lambda x: f"{x:.3f}" if pd.notna(x) else "")
         else:
@@ -422,15 +424,16 @@ def write_outputs(
 
     latest_week = weekly["week_end"].max()
     latest = weekly.loc[weekly["week_end"].eq(latest_week)].sort_values("rank")
+    last_market_date = max(frame["date"].max() for frame in prices.values()).date()
     report = f"""# A股云端选股报告
 
-生成日：{as_of.date()}（仅使用截至该日的已发生数据）  
+报告运行日：{as_of.date()}；实际行情截至：{last_market_date}。  
 股票池：沪深300当前成分股；成功日线 {len(prices)} 只，行业分类 {metadata['industry'].ne('未分类').sum()} 只，失败 {len(errors)} 只。  
-研究区间：2026-07-01 至 {as_of.date()}；9月未结束时，本报告不会填充未来行情。
+研究区间：2026-07-01 至 {last_market_date}；9月未结束时，本报告不会填充未来行情。
 
 ## 最新一周细分行业资金方向
 
-{markdown_table(latest, ['industry', 'week_end', 'estimated_net_flow', 'flow_to_amount', 'positive_days', 'trading_days', 'rank'])}
+{markdown_table(latest, ['industry', 'week_end', 'estimated_net_flow', 'flow_to_amount', 'positive_days', 'trading_days', 'week_complete', 'rank'])}
 
 ## 下一交易日 1–3日候选
 
