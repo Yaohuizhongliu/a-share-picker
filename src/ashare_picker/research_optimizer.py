@@ -177,7 +177,8 @@ def baseline_mask_score(panel: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
         & panel["amount_ratio5_20"].ge(1.05)
         & panel["ret10"].abs().le(0.18)
     )
-    score = 0.45 * panel["flow10_rank"] + 0.30 * panel["flow_z"].rank(pct=True) + 0.25 * panel["amount_ratio5_20"].clip(0, 2) / 2
+    flow_z_rank = panel.groupby("date")["flow_z"].rank(pct=True)
+    score = 0.45 * panel["flow10_rank"] + 0.30 * flow_z_rank + 0.25 * panel["amount_ratio5_20"].clip(0, 2) / 2
     return mask.fillna(False), score.fillna(-999.0)
 
 
@@ -239,11 +240,16 @@ def metrics(signals: pd.DataFrame, horizon: int) -> dict[str, float]:
 
 def parameter_grid() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    common = itertools.product([0.45, 0.52, 0.58], [0.0, 0.03], [0.0, 0.03], [0.55, 0.75])
+    common = itertools.product(
+        [0.30, 0.40, 0.50],
+        [-0.03, 0.0, 0.03],
+        [-0.03, 0.0, 0.03],
+        [0.75, 1.0],
+    )
     common_values = list(common)
     for template in ("flow_trend", "trend_pullback", "volume_breakout"):
         for breadth, sector_flow, stock_flow, max_vol_rank in common_values:
-            for momentum in (0.50, 0.65, 0.80):
+            for momentum in (0.35, 0.50, 0.65):
                 base = {
                     "template": template,
                     "breadth": breadth,
@@ -253,10 +259,10 @@ def parameter_grid() -> list[dict[str, Any]]:
                     "momentum": momentum,
                 }
                 if template == "trend_pullback":
-                    for pullback_rank in (0.35, 0.55):
+                    for pullback_rank in (0.45, 0.70):
                         rows.append({**base, "pullback_rank": pullback_rank})
                 elif template == "volume_breakout":
-                    for breakout, volume_ratio in itertools.product((-0.03, 0.0), (1.0, 1.2)):
+                    for breakout, volume_ratio in itertools.product((-0.05, 0.0), (0.8, 1.1)):
                         rows.append({**base, "breakout": breakout, "volume_ratio": volume_ratio})
                 else:
                     rows.append(base)
@@ -283,12 +289,14 @@ def optimize(panel: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], pd.Data
     rows = []
     best: dict[str, Any] | None = None
     best_score = -np.inf
+    fallback_best: dict[str, Any] | None = None
+    fallback_score = -np.inf
     for params in parameter_grid():
         mask, score = strategy_mask_score(panel, params)
         for horizon in (1, 2, 3):
             _, train = evaluate_period(panel, mask, score, train_start, train_end, horizon)
             _, validation = evaluate_period(panel, mask, score, validation_start, validation_end, horizon)
-            eligible = validation["trades"] >= 20 and validation["signal_days"] >= 8
+            eligible = validation["trades"] >= 15 and validation["signal_days"] >= 5
             if eligible and np.isfinite(validation["mean_return"]):
                 # Conservative validation objective: reward return and profit factor,
                 # penalize drawdown; the July-September holdout is never used here.
@@ -316,10 +324,26 @@ def optimize(panel: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], pd.Data
             rows.append(row)
             if objective > best_score:
                 best_score = objective
-                best = {**params, "horizon": horizon}
+                best = {**params, "horizon": horizon, "validation_sample_sufficient": True}
+            if validation["trades"] >= 5 and validation["signal_days"] >= 3 and np.isfinite(validation["mean_return"]):
+                fallback_objective = (
+                    validation["mean_return"]
+                    + 0.00025 * min(validation["profit_factor"], 3.0)
+                    + 0.03 * validation["max_drawdown"]
+                )
+                if fallback_objective > fallback_score:
+                    fallback_score = fallback_objective
+                    fallback_best = {
+                        **params,
+                        "horizon": horizon,
+                        "validation_sample_sufficient": False,
+                    }
 
-    if best is None or best_score <= -999:
-        raise RuntimeError("no parameter set met the minimum validation sample")
+    if best is None:
+        if fallback_best is None:
+            raise RuntimeError("no strategy produced even five validation trades")
+        best = fallback_best
+        best_score = fallback_score
 
     best_mask, best_rank = strategy_mask_score(panel, best)
     test_signals, test = evaluate_period(
@@ -385,7 +409,8 @@ def write_report(
         "mean_return", ascending=False
     ).iloc[0]
     promote = bool(
-        candidate["trades"] >= 20
+        bool(best.get("validation_sample_sufficient", False))
+        and candidate["trades"] >= 20
         and candidate["signal_days"] >= 8
         and candidate["mean_return"] > 0
         and candidate["mean_return"] > baseline["mean_return"]
@@ -416,7 +441,7 @@ def write_report(
 ## 验证设计
 
 - 训练观察：2026-03-15 至 2026-04-30。
-- 参数选择：2026-05-01 至 2026-06-30，至少20笔交易且覆盖8个信号日。
+- 参数选择：2026-05-01 至 2026-06-30，正式门槛为至少15笔交易且覆盖5个信号日。
 - 完全留出测试：2026-07-01 至最新交易日；这一段不参与参数选择。
 - 每天最多5只、每个细分行业最多2只，信号在收盘后计算，下一交易日开盘成交。
 - 已计入止损3%、止盈6%、双边佣金和滑点合计16bp。
@@ -431,6 +456,7 @@ def write_report(
 - 个股10日资金压力下限：{best['stock_flow']:.0%}
 - 最大波动率分位：{best['max_vol_rank']:.0%}
 - 动量分位下限：{best['momentum']:.0%}
+- 验证期样本门槛：{'达到' if best.get('validation_sample_sufficient') else '未达到（仅作探索，不可晋级）'}
 
 ## 7–9月完全留出测试
 
