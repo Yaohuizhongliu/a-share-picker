@@ -1,4 +1,4 @@
-name: Daily A-share report
+name: Daily A-share cloud report
 
 on:
   workflow_dispatch:
@@ -18,13 +18,11 @@ permissions:
 
 concurrency:
   group: daily-a-share-report
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    env:
-      ASHARE_STATIC_CATALOG: "1"
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
@@ -40,10 +38,17 @@ jobs:
       - name: Test
         run: pytest
 
-      - name: Build report
+      - name: Build verified HTTPS report
         env:
           TZ: Asia/Shanghai
-        run: ashare-picker run --config config/default.yml --as-of "$(date +%F)"
+        run: python -m ashare_picker.cloud_pipeline --config config/default.yml --as-of "$(date +%F)"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-share-report
+          path: reports/latest
+          retention-days: 30
 
       - name: Commit generated report
         run: |
@@ -53,6 +58,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No report changes"
           else
-            git commit -m "data: refresh daily A-share report"
+            git commit -m "data: refresh daily A-share cloud report"
             git push
           fi
