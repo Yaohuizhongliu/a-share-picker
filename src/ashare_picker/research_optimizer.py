@@ -262,6 +262,20 @@ def metrics(signals: pd.DataFrame, horizon: int) -> dict[str, float]:
     }
 
 
+def passes_validation_gate(result: dict[str, Any]) -> bool:
+    """Require positive validation economics before any live/paper signal is enabled."""
+    required = ("mean_return", "profit_factor", "max_drawdown")
+    if any(not np.isfinite(float(result.get(key, np.nan))) for key in required):
+        return False
+    return bool(
+        int(result.get("trades", 0)) >= 15
+        and int(result.get("signal_days", 0)) >= 5
+        and float(result["mean_return"]) > 0
+        and float(result["profit_factor"]) > 1.0
+        and float(result["max_drawdown"]) > -0.12
+    )
+
+
 def parameter_grid() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     common = itertools.product(
@@ -348,7 +362,12 @@ def optimize(panel: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], pd.Data
             rows.append(row)
             if objective > best_score:
                 best_score = objective
-                best = {**params, "horizon": horizon, "validation_sample_sufficient": True}
+                best = {
+                    **params,
+                    "horizon": horizon,
+                    "validation_sample_sufficient": True,
+                    "validation": validation,
+                }
             if validation["trades"] >= 5 and validation["signal_days"] >= 3 and np.isfinite(validation["mean_return"]):
                 fallback_objective = (
                     validation["mean_return"]
@@ -361,6 +380,7 @@ def optimize(panel: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], pd.Data
                         **params,
                         "horizon": horizon,
                         "validation_sample_sufficient": False,
+                        "validation": validation,
                     }
 
     if best is None:
@@ -427,22 +447,34 @@ def latest_recommendations(
     ].iloc[0]
     promote_candidate = bool(
         best.get("validation_sample_sufficient", False)
+        and passes_validation_gate(best.get("validation", {}))
         and candidate["trades"] >= 20
         and candidate["signal_days"] >= 8
         and candidate["mean_return"] > 0
         and candidate["mean_return"] > baseline_selected["mean_return"]
     )
+    baseline_qualified = passes_validation_gate(best["baseline_validation"])
     if promote_candidate:
         mask, score = strategy_mask_score(panel, best)
         horizon = int(best["horizon"])
         selected_model = f"candidate_{best['template']}"
-    else:
+        trade_enabled = True
+    elif baseline_qualified:
         mask, score = baseline_mask_score(panel)
         horizon = int(best["baseline_selected_horizon"])
         selected_model = "baseline_accumulation"
+        trade_enabled = True
+    else:
+        mask, score = baseline_mask_score(panel)
+        horizon = int(best["baseline_selected_horizon"])
+        selected_model = "cash_no_trade"
+        trade_enabled = False
 
     latest_date = panel["date"].max()
-    signals = select_live_signals(panel, mask, score, latest_date)
+    signals = (
+        select_live_signals(panel, mask, score, latest_date)
+        if trade_enabled else panel.loc[panel["date"].lt(latest_date)].head(0).copy()
+    )
     if signals.empty:
         relaxed = panel.loc[panel["date"].eq(latest_date)].copy()
         relaxed["signal_score"] = score.loc[relaxed.index]
@@ -452,11 +484,12 @@ def latest_recommendations(
     else:
         signals["model_signal"] = True
     signals["selected_model"] = selected_model
+    signals["trade_enabled"] = trade_enabled
     signals["planned_holding_days"] = horizon
     signals["entry_rule"] = "下一交易日开盘；高开超过3%跳过"
     signals["exit_rule"] = f"止损3% / 止盈6% / 最长{horizon}日"
     columns = [
-        "date", "code", "name", "industry", "selected_model", "model_signal",
+        "date", "code", "name", "industry", "selected_model", "trade_enabled", "model_signal",
         "signal_score", "close", "ret5", "ret20", "ret60", "flow10",
         "sector_flow5", "market_breadth", "vol20_rank",
         "planned_holding_days", "entry_rule", "exit_rule",
@@ -484,16 +517,19 @@ def write_report(
     )
 
     candidate = comparison.loc[comparison["model"].str.startswith("candidate_")].iloc[0]
-    baseline = comparison.loc[comparison["model"].eq("baseline_accumulation")].sort_values(
-        "mean_return", ascending=False
-    ).iloc[0]
+    baseline = comparison.loc[
+        comparison["model"].eq("baseline_accumulation")
+        & comparison["horizon"].eq(best["baseline_selected_horizon"])
+    ].iloc[0]
     promote = bool(
         bool(best.get("validation_sample_sufficient", False))
+        and passes_validation_gate(best.get("validation", {}))
         and candidate["trades"] >= 20
         and candidate["signal_days"] >= 8
         and candidate["mean_return"] > 0
         and candidate["mean_return"] > baseline["mean_return"]
     )
+    baseline_qualified = passes_validation_gate(best["baseline_validation"])
 
     compare_rows = []
     for _, row in comparison.iterrows():
@@ -514,11 +550,18 @@ def write_report(
 
     selected_model = recommendations["selected_model"].iloc[0]
     selected_horizon = int(recommendations["planned_holding_days"].iloc[0])
+    conclusion = (
+        "新候选通过门槛，进入纸面跟踪"
+        if promote else
+        "新动量模型未通过；吸筹基线通过验证，继续纸面跟踪"
+        if baseline_qualified else
+        "候选与基线均未通过验证；启动空仓保护，不发布买入信号"
+    )
     report = f"""# A股短线策略增益研究
 
 研究日期：{recommendations['date'].max().date()}  
-最终结论：**{'新候选通过门槛，进入纸面跟踪' if promote else '新动量模型未通过；保留收紧后的吸筹基线进行纸面跟踪'}**。  
-纸面跟踪模型：`{selected_model}`，持有期 {selected_horizon} 日。
+最终结论：**{conclusion}**。  
+当前状态：`{selected_model}`，研究持有期 {selected_horizon} 日。
 
 ## 验证设计
 
@@ -539,6 +582,8 @@ def write_report(
 - 最大波动率分位：{best['max_vol_rank']:.0%}
 - 动量分位下限：{best['momentum']:.0%}
 - 验证期样本门槛：{'达到' if best.get('validation_sample_sufficient') else '未达到（仅作探索，不可晋级）'}
+- 交易闸门：验证期必须平均收益 > 0、盈亏比 > 1、最大回撤优于 -12%，否则空仓。
+- 吸筹基线验证：平均每笔 {format_pct(best['baseline_validation']['mean_return'])}，盈亏比 {best['baseline_validation']['profit_factor']:.2f}，最大回撤 {format_pct(best['baseline_validation']['max_drawdown'])}，{'通过' if baseline_qualified else '未通过'}。
 
 ## 7–9月完全留出测试
 
@@ -546,7 +591,7 @@ def write_report(
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 {chr(10).join(compare_rows)}
 
-只有新候选策略在留出期平均收益为正、优于验证期选定的吸筹基线且样本数达标时才允许晋级。本轮新动量模型未通过，因此没有替换基线。吸筹基线同时加入“每天最多5只、每行业最多2只”的执行约束，减少弱信号和行业集中。没有通过时，正确动作是继续收集数据，而不是根据7–9月结果再次调参。
+只有新候选策略在验证期先通过交易闸门、且留出期平均收益为正、优于验证期选定的吸筹基线并满足样本数时才允许晋级。本轮新动量模型没有晋级；吸筹基线的验证期也未通过，因此系统保持空仓。每天最多5只、每行业最多2只的约束仍保留。没有通过时，正确动作是继续收集数据，而不是根据7–9月结果再次调参。
 
 ## 最新候选
 
@@ -554,7 +599,7 @@ def write_report(
 | --- | --- | --- | --- | ---: | ---: | ---: | ---: |
 {chr(10).join(rec_rows) if rec_rows else '| — | — | — | 无信号 | — | — | — | — |'}
 
-“观察”表示最新交易日没有满足入选模型全部条件，只展示最接近条件的股票；不可当作买入信号。
+“观察”只展示最接近条件的股票；当状态为 `cash_no_trade` 或交易闸门关闭时，即使技术条件接近也不可当作买入信号。
 
 ## 为什么这比旧回测更可靠
 

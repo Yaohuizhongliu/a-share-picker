@@ -5,6 +5,7 @@ from ashare_picker.research_optimizer import (
     _stock_features,
     metrics,
     parameter_grid,
+    passes_validation_gate,
     select_signals,
 )
 
@@ -56,3 +57,17 @@ def test_optimizer_grid_and_metrics_are_nonempty():
     assert result["trades"] == 3
     assert result["signal_days"] == 2
     assert result["mean_return"] > 0
+
+
+def test_validation_gate_blocks_negative_or_risky_models():
+    good = {
+        "trades": 30,
+        "signal_days": 10,
+        "mean_return": 0.001,
+        "profit_factor": 1.2,
+        "max_drawdown": -0.08,
+    }
+    assert passes_validation_gate(good)
+    assert not passes_validation_gate({**good, "mean_return": -0.001})
+    assert not passes_validation_gate({**good, "profit_factor": 0.9})
+    assert not passes_validation_gate({**good, "max_drawdown": -0.15})
