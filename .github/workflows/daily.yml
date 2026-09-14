@@ -43,6 +43,9 @@ jobs:
           TZ: Asia/Shanghai
         run: python -m ashare_picker.cloud_pipeline --config config/default.yml --as-of "$(date +%F)"
 
+      - name: Walk-forward strategy research
+        run: python -m ashare_picker.research_optimizer --config config/default.yml --report-dir reports/latest
+
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
