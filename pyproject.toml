@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a-share-picker"
+version = "0.1.0"
+description = "Reproducible A-share sector-flow and short-horizon stock research pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Yaohuizhongliu"}]
+dependencies = [
+  "akshare>=1.18.0,<2",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<4",
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[project.scripts]
+ashare-picker = "ashare_picker.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,51 @@
+period:
+  start: "2026-07-01"
+  end: "2026-09-30"
+  report_date: "2026-06-30"
+
+download:
+  adjust: "qfq"
+  history_calendar_days: 180
+  cache_hours: 18
+  retries: 4
+  retry_base_seconds: 1.5
+  request_pause_seconds: 0.15
+  max_workers: 6
+
+universe:
+  top_industries: 10
+  max_stocks_per_industry: 25
+  min_history_days: 70
+  min_average_amount: 30000000
+  exclude_name_patterns: ["ST", "退"]
+
+rounded_bottom:
+  window: 60
+  min_r2: 0.42
+  min_curvature: 0.035
+  min_recovery: 0.08
+  min_last_5d_return: 0.0
+
+accumulation:
+  recent_days: 10
+  baseline_days: 60
+  min_positive_ratio: 0.60
+  min_zscore: 0.45
+  min_volume_ratio: 1.05
+  max_abs_10d_price_return: 0.18
+
+strategy:
+  top_n: 10
+  stop_loss: 0.03
+  take_profit: 0.06
+  max_holding_days: 3
+  commission_bps_each_side: 3.0
+  slippage_bps_each_side: 5.0
+  weights:
+    sector: 0.20
+    growth: 0.25
+    rounded_bottom: 0.30
+    accumulation: 0.25
+
+output:
+  directory: "reports/latest"
