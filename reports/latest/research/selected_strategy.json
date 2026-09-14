@@ -7,6 +7,16 @@
   "momentum": 0.65,
   "horizon": 3,
   "validation_sample_sufficient": true,
+  "validation": {
+    "trades": 30,
+    "signal_days": 6,
+    "win_rate": 0.6666666666666666,
+    "mean_return": 0.01859128216481952,
+    "median_return": 0.02482679368348777,
+    "daily_sharpe": 11.923328152296138,
+    "max_drawdown": -0.013600000000000056,
+    "profit_factor": 3.0207078186120992
+  },
   "selection_objective": 0.01893328216481952,
   "test": {
     "trades": 120,
