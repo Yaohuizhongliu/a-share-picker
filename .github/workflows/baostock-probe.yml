@@ -1,0 +1,65 @@
+name: BaoStock connectivity probe
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/baostock-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install BaoStock
+        run: python -m pip install --disable-pip-version-check baostock==0.8.9 pandas
+      - name: Test industry and daily data
+        shell: bash
+        run: |
+          python - <<'PY'
+          import baostock as bs
+
+          login = bs.login()
+          if login.error_code != "0":
+              raise RuntimeError(f"login failed: {login.error_code} {login.error_msg}")
+
+          try:
+              industries = bs.query_stock_industry()
+              rows = []
+              while industries.error_code == "0" and industries.next():
+                  rows.append(industries.get_row_data())
+              if industries.error_code != "0" or len(rows) < 100:
+                  raise RuntimeError(
+                      f"industry query failed/incomplete: {industries.error_code} "
+                      f"{industries.error_msg}; rows={len(rows)}"
+                  )
+
+              bars = bs.query_history_k_data_plus(
+                  "sh.600519",
+                  "date,code,open,high,low,close,volume,amount,turn,pctChg",
+                  start_date="2026-07-01",
+                  end_date="2026-09-14",
+                  frequency="d",
+                  adjustflag="2",
+              )
+              bar_rows = []
+              while bars.error_code == "0" and bars.next():
+                  bar_rows.append(bars.get_row_data())
+              if bars.error_code != "0" or not bar_rows:
+                  raise RuntimeError(
+                      f"daily query failed: {bars.error_code} {bars.error_msg}; "
+                      f"rows={len(bar_rows)}"
+                  )
+
+              print(f"BaoStock probe passed: industries={len(rows)}, daily_rows={len(bar_rows)}")
+              print("last_bar=", bar_rows[-1])
+          finally:
+              bs.logout()
+          PY
