@@ -211,6 +211,30 @@ def select_signals(
     return candidates.loc[selected_rows].copy() if selected_rows else candidates.head(0)
 
 
+def select_live_signals(
+    panel: pd.DataFrame,
+    mask: pd.Series,
+    score: pd.Series,
+    signal_date: pd.Timestamp,
+    max_per_day: int = 5,
+    max_per_industry: int = 2,
+) -> pd.DataFrame:
+    candidates = panel.loc[mask & panel["date"].eq(signal_date)].copy()
+    candidates["signal_score"] = score.loc[candidates.index]
+    candidates = candidates.sort_values("signal_score", ascending=False)
+    selected_rows = []
+    industry_counts: dict[str, int] = {}
+    for idx, row in candidates.iterrows():
+        industry = str(row["industry"])
+        if industry_counts.get(industry, 0) >= max_per_industry:
+            continue
+        selected_rows.append(idx)
+        industry_counts[industry] = industry_counts.get(industry, 0) + 1
+        if len(selected_rows) >= max_per_day:
+            break
+    return candidates.loc[selected_rows].copy() if selected_rows else candidates.head(0)
+
+
 def metrics(signals: pd.DataFrame, horizon: int) -> dict[str, float]:
     if signals.empty:
         return {
@@ -352,20 +376,73 @@ def optimize(panel: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], pd.Data
     best.update({"selection_objective": best_score, "test": test})
 
     baseline_mask, baseline_score = baseline_mask_score(panel)
+    baseline_validation = []
+    for horizon in (1, 2, 3):
+        _, result = evaluate_period(
+            panel, baseline_mask, baseline_score, validation_start, validation_end, horizon
+        )
+        baseline_validation.append({"horizon": horizon, **result})
+    eligible_baseline = [
+        row for row in baseline_validation
+        if row["trades"] >= 15 and row["signal_days"] >= 5 and np.isfinite(row["mean_return"])
+    ]
+    if eligible_baseline:
+        selected_baseline = max(eligible_baseline, key=lambda row: row["mean_return"])
+    else:
+        selected_baseline = max(
+            baseline_validation,
+            key=lambda row: row["mean_return"] if np.isfinite(row["mean_return"]) else -999.0,
+        )
+    best["baseline_selected_horizon"] = int(selected_baseline["horizon"])
+    best["baseline_validation"] = selected_baseline
+
     comparisons = []
     for horizon in (1, 2, 3):
         _, result = evaluate_period(panel, baseline_mask, baseline_score, test_start, test_end, horizon)
-        comparisons.append({"model": "baseline_accumulation", "horizon": horizon, **result})
-    comparisons.append({"model": f"candidate_{best['template']}", "horizon": best["horizon"], **test})
+        comparisons.append({
+            "model": "baseline_accumulation",
+            "horizon": horizon,
+            "selected_on_validation": horizon == best["baseline_selected_horizon"],
+            **result,
+        })
+    comparisons.append({
+        "model": f"candidate_{best['template']}",
+        "horizon": best["horizon"],
+        "selected_on_validation": True,
+        **test,
+    })
     comparison = pd.DataFrame(comparisons)
     return pd.DataFrame(rows).sort_values("selection_objective", ascending=False), best, comparison
 
 
-def latest_recommendations(panel: pd.DataFrame, best: dict[str, Any]) -> pd.DataFrame:
-    mask, score = strategy_mask_score(panel, best)
+def latest_recommendations(
+    panel: pd.DataFrame,
+    best: dict[str, Any],
+    comparison: pd.DataFrame,
+) -> pd.DataFrame:
+    candidate = comparison.loc[comparison["model"].str.startswith("candidate_")].iloc[0]
+    baseline_selected = comparison.loc[
+        comparison["model"].eq("baseline_accumulation")
+        & comparison["horizon"].eq(best["baseline_selected_horizon"])
+    ].iloc[0]
+    promote_candidate = bool(
+        best.get("validation_sample_sufficient", False)
+        and candidate["trades"] >= 20
+        and candidate["signal_days"] >= 8
+        and candidate["mean_return"] > 0
+        and candidate["mean_return"] > baseline_selected["mean_return"]
+    )
+    if promote_candidate:
+        mask, score = strategy_mask_score(panel, best)
+        horizon = int(best["horizon"])
+        selected_model = f"candidate_{best['template']}"
+    else:
+        mask, score = baseline_mask_score(panel)
+        horizon = int(best["baseline_selected_horizon"])
+        selected_model = "baseline_accumulation"
+
     latest_date = panel["date"].max()
-    horizon = int(best["horizon"])
-    signals = select_signals(panel, mask, score, latest_date, latest_date, horizon)
+    signals = select_live_signals(panel, mask, score, latest_date)
     if signals.empty:
         relaxed = panel.loc[panel["date"].eq(latest_date)].copy()
         relaxed["signal_score"] = score.loc[relaxed.index]
@@ -374,13 +451,15 @@ def latest_recommendations(panel: pd.DataFrame, best: dict[str, Any]) -> pd.Data
         signals = relaxed
     else:
         signals["model_signal"] = True
+    signals["selected_model"] = selected_model
     signals["planned_holding_days"] = horizon
     signals["entry_rule"] = "下一交易日开盘；高开超过3%跳过"
     signals["exit_rule"] = f"止损3% / 止盈6% / 最长{horizon}日"
     columns = [
-        "date", "code", "name", "industry", "model_signal", "signal_score",
-        "close", "ret5", "ret20", "ret60", "flow10", "sector_flow5",
-        "market_breadth", "vol20_rank", "planned_holding_days", "entry_rule", "exit_rule",
+        "date", "code", "name", "industry", "selected_model", "model_signal",
+        "signal_score", "close", "ret5", "ret20", "ret60", "flow10",
+        "sector_flow5", "market_breadth", "vol20_rank",
+        "planned_holding_days", "entry_rule", "exit_rule",
     ]
     return signals[[column for column in columns if column in signals]]
 
@@ -433,10 +512,13 @@ def write_report(
             f"{int(row['planned_holding_days'])} |"
         )
 
+    selected_model = recommendations["selected_model"].iloc[0]
+    selected_horizon = int(recommendations["planned_holding_days"].iloc[0])
     report = f"""# A股短线策略增益研究
 
 研究日期：{recommendations['date'].max().date()}  
-最终结论：**{'通过样本外门槛，可进入纸面跟踪' if promote else '未通过样本外收益门槛，不替换现有生产策略'}**。
+最终结论：**{'新候选通过门槛，进入纸面跟踪' if promote else '新动量模型未通过；保留收紧后的吸筹基线进行纸面跟踪'}**。  
+纸面跟踪模型：`{selected_model}`，持有期 {selected_horizon} 日。
 
 ## 验证设计
 
@@ -464,7 +546,7 @@ def write_report(
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 {chr(10).join(compare_rows)}
 
-只有候选策略在留出期平均收益为正、优于基线且样本数达标时才允许晋级。没有通过时，正确动作是继续收集数据，而不是根据7–9月结果再次调参。
+只有新候选策略在留出期平均收益为正、优于验证期选定的吸筹基线且样本数达标时才允许晋级。本轮新动量模型未通过，因此没有替换基线。吸筹基线同时加入“每天最多5只、每行业最多2只”的执行约束，减少弱信号和行业集中。没有通过时，正确动作是继续收集数据，而不是根据7–9月结果再次调参。
 
 ## 最新候选
 
@@ -491,7 +573,7 @@ def run(config_path: str, report_dir_text: str) -> Path:
     report_dir = Path(report_dir_text)
     panel = build_feature_panel(load_inputs(report_dir), cfg)
     grid, best, comparison = optimize(panel)
-    recommendations = latest_recommendations(panel, best)
+    recommendations = latest_recommendations(panel, best, comparison)
     output_dir = report_dir / "research"
     write_report(output_dir, grid, best, comparison, recommendations)
     LOG.info("optimizer outputs written to %s", output_dir)
