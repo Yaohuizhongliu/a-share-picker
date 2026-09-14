@@ -1,4 +1,4 @@
-name: BaoStock connectivity probe
+name: HTTPS market-data probe
 
 on:
   workflow_dispatch:
@@ -12,54 +12,105 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install BaoStock
-        run: python -m pip install --disable-pip-version-check baostock==0.8.9 pandas
-      - name: Test industry and daily data
-        shell: bash
+      - name: Install clients
+        run: python -m pip install --disable-pip-version-check akshare==1.18.94 yfinance
+      - name: Probe HTTPS sources
         run: |
           python - <<'PY'
-          import baostock as bs
+          import signal
+          import traceback
 
-          login = bs.login()
-          if login.error_code != "0":
-              raise RuntimeError(f"login failed: {login.error_code} {login.error_msg}")
+          import akshare as ak
+          import yfinance as yf
 
-          try:
-              industries = bs.query_stock_industry()
-              rows = []
-              while industries.error_code == "0" and industries.next():
-                  rows.append(industries.get_row_data())
-              if industries.error_code != "0" or len(rows) < 100:
-                  raise RuntimeError(
-                      f"industry query failed/incomplete: {industries.error_code} "
-                      f"{industries.error_msg}; rows={len(rows)}"
-                  )
+          results = {}
 
-              bars = bs.query_history_k_data_plus(
-                  "sh.600519",
-                  "date,code,open,high,low,close,volume,amount,turn,pctChg",
-                  start_date="2026-07-01",
-                  end_date="2026-09-14",
-                  frequency="d",
-                  adjustflag="2",
-              )
-              bar_rows = []
-              while bars.error_code == "0" and bars.next():
-                  bar_rows.append(bars.get_row_data())
-              if bars.error_code != "0" or not bar_rows:
-                  raise RuntimeError(
-                      f"daily query failed: {bars.error_code} {bars.error_msg}; "
-                      f"rows={len(bar_rows)}"
-                  )
+          def run(name, fn, timeout=90):
+              def expired(_signum, _frame):
+                  raise TimeoutError(f"{name} timed out after {timeout}s")
+              old = signal.signal(signal.SIGALRM, expired)
+              signal.alarm(timeout)
+              try:
+                  value = fn()
+                  results[name] = f"PASS {value}"
+              except Exception as exc:
+                  results[name] = f"FAIL {type(exc).__name__}: {exc}"
+                  traceback.print_exc(limit=2)
+              finally:
+                  signal.alarm(0)
+                  signal.signal(signal.SIGALRM, old)
 
-              print(f"BaoStock probe passed: industries={len(rows)}, daily_rows={len(bar_rows)}")
-              print("last_bar=", bar_rows[-1])
-          finally:
-              bs.logout()
+          run(
+              "sina_daily",
+              lambda: (
+                  lambda df: f"rows={len(df)}, last={df.iloc[-1]['date'] if len(df) else None}"
+              )(ak.stock_zh_a_daily(
+                  symbol="sh600519",
+                  start_date="20260701",
+                  end_date="20260914",
+                  adjust="",
+              )),
+          )
+          run(
+              "ths_industries",
+              lambda: (
+                  lambda df: f"rows={len(df)}, columns={list(df.columns)}"
+              )(ak.stock_board_industry_name_ths()),
+          )
+          run(
+              "ths_sector_daily",
+              lambda: (
+                  lambda df: f"rows={len(df)}, last={df.iloc[-1]['日期'] if len(df) else None}"
+              )(ak.stock_board_industry_index_ths(
+                  symbol="半导体",
+                  start_date="20260701",
+                  end_date="20260914",
+              )),
+          )
+          run(
+              "cninfo_industry",
+              lambda: (
+                  lambda df: f"rows={len(df)}, columns={list(df.columns)}"
+              )(ak.stock_industry_change_cninfo(
+                  symbol="600519",
+                  start_date="20200101",
+                  end_date="20260914",
+              )),
+          )
+          run(
+              "csindex_constituents",
+              lambda: (
+                  lambda df: f"rows={len(df)}, columns={list(df.columns)}"
+              )(ak.index_stock_cons_csindex(symbol="000300")),
+          )
+          run(
+              "yahoo_daily",
+              lambda: (
+                  lambda df: f"rows={len(df)}, last={df.index[-1] if len(df) else None}"
+              )(yf.download(
+                  "600519.SS",
+                  start="2026-07-01",
+                  end="2026-09-15",
+                  progress=False,
+                  auto_adjust=False,
+                  timeout=30,
+              )),
+              timeout=60,
+          )
+
+          print("\n=== HTTPS PROBE SUMMARY ===")
+          for key, value in results.items():
+              print(f"{key}: {value}")
+
+          if not (
+              results.get("sina_daily", "").startswith("PASS")
+              or results.get("yahoo_daily", "").startswith("PASS")
+          ):
+              raise SystemExit("No HTTPS daily-price source passed")
           PY
