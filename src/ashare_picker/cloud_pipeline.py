@@ -378,9 +378,12 @@ def markdown_table(frame: pd.DataFrame, columns: list[str], limit: int = 12) -> 
     data = frame.loc[:, [column for column in columns if column in frame]].head(limit).copy()
     for column in data.columns:
         if pd.api.types.is_float_dtype(data[column]):
-            if column == "estimated_net_flow" or column.endswith("_amount") or column == "main_net_10d":
+            if column in {"estimated_net_flow", "total_amount", "main_net_10d", "average_amount_20d"}:
                 data[column] = data[column].map(lambda x: f"{x / 1e8:.2f}亿" if pd.notna(x) else "")
-            elif "ratio" in column or "return" in column or "rate" in column:
+            elif column in {
+                "flow_to_amount", "positive_day_ratio", "win_rate", "average_return",
+                "median_return", "worst_trade", "best_trade",
+            } or "ratio" in column or "return" in column or "rate" in column:
                 data[column] = data[column].map(lambda x: f"{x:.2%}" if pd.notna(x) else "")
             else:
                 data[column] = data[column].map(lambda x: f"{x:.3f}" if pd.notna(x) else "")
