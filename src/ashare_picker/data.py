@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Callable
 
 import pandas as pd
+import requests
 
 LOG = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class AkshareClient:
         retries: int = 4,
         retry_base_seconds: float = 1.5,
         request_pause_seconds: float = 0.15,
+        catalog_path: str | Path | None = None,
     ) -> None:
         try:
             import akshare as ak
@@ -48,6 +50,11 @@ class AkshareClient:
         self.retries = max(1, retries)
         self.retry_base_seconds = retry_base_seconds
         self.request_pause_seconds = request_pause_seconds
+        self.catalog_path = (
+            Path(catalog_path)
+            if catalog_path
+            else Path(__file__).resolve().parents[2] / "data" / "industry_catalog.csv"
+        )
         self.warnings: list[str] = []
         self._warning_lock = threading.Lock()
 
@@ -95,16 +102,77 @@ class AkshareClient:
         raise DataSourceError(f"{key} 获取失败：{last_error}") from last_error
 
     def industry_names(self, *, force: bool = False) -> pd.DataFrame:
-        raw = self._cached_call(
-            "industry_names",
-            self.ak.stock_board_industry_name_em,
-            force=force,
-        )
-        required = {"板块名称", "板块代码"}
-        if not required.issubset(raw.columns):
-            raise DataSourceError(f"行业列表字段变化：{list(raw.columns)}")
-        out = raw.rename(columns={"板块名称": "industry", "板块代码": "industry_code"})
+        try:
+            raw = self._cached_call(
+                "industry_names",
+                self.ak.stock_board_industry_name_em,
+                force=force,
+            )
+            required = {"板块名称", "板块代码"}
+            if not required.issubset(raw.columns):
+                raise DataSourceError(f"行业列表字段变化：{list(raw.columns)}")
+            out = raw.rename(columns={"板块名称": "industry", "板块代码": "industry_code"})
+        except Exception as exc:
+            if not self.catalog_path.exists():
+                raise
+            self._warn(f"实时行业列表不可用，使用仓库内行业目录快照：{exc}")
+            out = pd.read_csv(self.catalog_path, dtype=str)
         return out[["industry", "industry_code"]].dropna().drop_duplicates().reset_index(drop=True)
+
+    def _industry_code(self, industry: str) -> str:
+        catalog = pd.read_csv(self.catalog_path, dtype=str)
+        match = catalog.loc[catalog["industry"] == industry, "industry_code"]
+        if match.empty:
+            raise DataSourceError(f"本地行业目录缺少 {industry}")
+        return str(match.iloc[0])
+
+    def _direct_industry_flow(self, industry: str) -> pd.DataFrame:
+        code = self._industry_code(industry)
+        url = "https://push2his.eastmoney.com/api/qt/stock/fflow/daykline/get"
+        params = {
+            "lmt": "0",
+            "klt": "101",
+            "fields1": "f1,f2,f3,f7",
+            "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63,f64,f65",
+            "secid": f"90.{code}",
+        }
+        response = requests.get(
+            url,
+            params=params,
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        klines = (payload.get("data") or {}).get("klines") or []
+        frame = pd.DataFrame([item.split(",") for item in klines])
+        if frame.empty:
+            raise DataSourceError(f"{industry} 历史资金流直连返回空数据")
+        frame.columns = [
+            "日期",
+            "主力净流入-净额",
+            "小单净流入-净额",
+            "中单净流入-净额",
+            "大单净流入-净额",
+            "超大单净流入-净额",
+            "主力净流入-净占比",
+            "小单净流入-净占比",
+            "中单净流入-净占比",
+            "大单净流入-净占比",
+            "超大单净流入-净占比",
+            "_1",
+            "_2",
+            "_3",
+            "_4",
+        ]
+        return frame
+
+    def _fetch_industry_flow(self, industry: str) -> pd.DataFrame:
+        try:
+            return self.ak.stock_sector_fund_flow_hist(symbol=industry)
+        except Exception as exc:
+            self._warn(f"{industry} 的 AKShare 行业资金流映射失败，改用本地代码直连历史接口：{exc}")
+            return self._direct_industry_flow(industry)
 
     def industry_members(self, industry: str, *, force: bool = False) -> pd.DataFrame:
         raw = self._cached_call(
@@ -169,7 +237,7 @@ class AkshareClient:
     def industry_flow(self, industry: str, *, force: bool = False) -> pd.DataFrame:
         raw = self._cached_call(
             f"industry_flow:{industry}",
-            lambda: self.ak.stock_sector_fund_flow_hist(symbol=industry),
+            lambda: self._fetch_industry_flow(industry),
             force=force,
         )
         mapping = {

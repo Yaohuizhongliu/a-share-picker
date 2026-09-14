@@ -224,8 +224,18 @@ def run_pipeline(config_path: str | Path, as_of: str | None = None, *, force: bo
                 "latest_amount", ascending=False, na_position="last"
             )
         except Exception as exc:
-            local_warnings.append(f"行业 {industry} 成分获取失败：{exc}")
-            continue
+            fallback = (
+                fundamentals.loc[fundamentals.get("reported_industry", pd.Series(dtype=str)) == industry]
+                if "reported_industry" in fundamentals
+                else pd.DataFrame()
+            )
+            if fallback.empty:
+                local_warnings.append(f"行业 {industry} 成分获取失败且无财报后备：{exc}")
+                continue
+            local_warnings.append(f"行业 {industry} 实时成分失败，使用 {len(fallback)} 只财报行业成分：{exc}")
+            members = fallback.rename(columns={"name": "name"})[["code", "name"]].copy()
+            members["latest_amount"] = np.nan
+            members["turnover"] = np.nan
         if max_per_industry > 0:
             members = members.head(max_per_industry)
         for _, member in members.iterrows():
