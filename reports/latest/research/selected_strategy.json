@@ -1,0 +1,21 @@
+{
+  "template": "flow_trend",
+  "breadth": 0.5,
+  "sector_flow": -0.03,
+  "stock_flow": -0.03,
+  "max_vol_rank": 0.75,
+  "momentum": 0.65,
+  "horizon": 3,
+  "validation_sample_sufficient": true,
+  "selection_objective": 0.01893328216481952,
+  "test": {
+    "trades": 120,
+    "signal_days": 24,
+    "win_rate": 0.38333333333333336,
+    "mean_return": -0.006263318653622455,
+    "median_return": -0.007996354996303922,
+    "daily_sharpe": -6.050937947609177,
+    "max_drawdown": -0.16555411216733762,
+    "profit_factor": 0.5444699701742455
+  }
+}
