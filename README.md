@@ -12,7 +12,7 @@ A 股日线研究与候选筛选工具。它把 2026 年 7–9 月（或任意�
 - 用对数价格二次曲线、拟合优度、回升幅度和近期上涨确认圆弧底
 - 用近 10 日主力净流入、正流入天数、60 日 z-score 和量能识别资金异动
 - 生成下一交易日开盘候选，并用止盈、止损、最长 3 日持有规则进行日线级保守回测
-- GitHub Actions 每个交易日北京时间约 16:30 自动刷新报告，也支持手动运行
+- GitHub Actions 包含测试与定时刷新任务；若东方财富拒绝 GitHub 机房 IP，则改在国内网络或自托管 runner 运行
 
 ## 快速开始
 
@@ -76,13 +76,15 @@ pytest
 
 ## 每日自动运行
 
-仓库已包含 `.github/workflows/daily.yml`。在 GitHub 仓库的 **Actions** 页面启用工作流后，可以：
+仓库已包含 `.github/workflows/daily.yml`：提交代码时会先运行离线测试；工作日北京时间约 16:30 尝试刷新数据，也支持在 **Actions** 页面点击 **Run workflow**。
 
-- 点击 **Run workflow** 立即生成一次报告；
-- 等待工作日定时任务自动生成；
-- 在 `reports/latest/report.md` 查看最新结果。
+东方财富已被实测会间歇性拒绝 GitHub 托管机房 IP。出现 `RemoteDisconnected` 或“所有行业资金流均获取失败”时，不要把它解释为“市场无候选”，应在国内网络执行下面的同一命令，或把 workflow 的 `runs-on` 改为已配置的国内自托管 runner：
 
-工作流只提交派生报告，不提交本地缓存。若上游接口临时失败，工作流会保留日志，不会把空报告当作成功结果。
+~~~bash
+ashare-picker run --config config/default.yml
+~~~
+
+Linux/macOS 可用 cron 在交易日收盘后运行；Windows 可在“任务计划程序”中把上述命令设为工作日定时任务。成功后查看 `reports/latest/report.md`。工作流只提交派生报告，不提交本地缓存；上游失败时进程以非零状态结束，不会把空报告冒充成功结果。
 
 ## 许可证
 
