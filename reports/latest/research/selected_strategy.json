@@ -17,5 +17,17 @@
     "daily_sharpe": -6.050937947609177,
     "max_drawdown": -0.16555411216733762,
     "profit_factor": 0.5444699701742455
+  },
+  "baseline_selected_horizon": 1,
+  "baseline_validation": {
+    "horizon": 1,
+    "trades": 143,
+    "signal_days": 35,
+    "win_rate": 0.3706293706293706,
+    "mean_return": -0.0020607256103011857,
+    "median_return": -0.006677688636132782,
+    "daily_sharpe": -2.739782344030886,
+    "max_drawdown": -0.17194161279878306,
+    "profit_factor": 0.815007044944265
   }
 }
