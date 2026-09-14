@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import os
 import random
 import threading
 import time
@@ -55,6 +56,7 @@ class AkshareClient:
             if catalog_path
             else Path(__file__).resolve().parents[2] / "data" / "industry_catalog.csv"
         )
+        self.use_static_catalog = os.getenv("ASHARE_STATIC_CATALOG", "").strip() == "1"
         self.warnings: list[str] = []
         self._warning_lock = threading.Lock()
 
@@ -102,6 +104,9 @@ class AkshareClient:
         raise DataSourceError(f"{key} 获取失败：{last_error}") from last_error
 
     def industry_names(self, *, force: bool = False) -> pd.DataFrame:
+        if self.use_static_catalog:
+            self._warn("已按 ASHARE_STATIC_CATALOG=1 使用仓库内行业目录")
+            return pd.read_csv(self.catalog_path, dtype=str)
         try:
             raw = self._cached_call(
                 "industry_names",
@@ -168,6 +173,8 @@ class AkshareClient:
         return frame
 
     def _fetch_industry_flow(self, industry: str) -> pd.DataFrame:
+        if self.use_static_catalog:
+            return self._direct_industry_flow(industry)
         try:
             return self.ak.stock_sector_fund_flow_hist(symbol=industry)
         except Exception as exc:
@@ -175,6 +182,8 @@ class AkshareClient:
             return self._direct_industry_flow(industry)
 
     def industry_members(self, industry: str, *, force: bool = False) -> pd.DataFrame:
+        if self.use_static_catalog:
+            raise DataSourceError("静态目录模式跳过易受限的实时行业成分接口")
         raw = self._cached_call(
             f"industry_members:{industry}",
             lambda: self.ak.stock_board_industry_cons_em(symbol=industry),

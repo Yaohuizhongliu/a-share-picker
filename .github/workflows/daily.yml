@@ -18,11 +18,13 @@ permissions:
 
 concurrency:
   group: daily-a-share-report
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    env:
+      ASHARE_STATIC_CATALOG: "1"
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
