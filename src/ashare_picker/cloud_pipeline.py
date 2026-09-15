@@ -284,7 +284,7 @@ def fetch_universe(
         members.columns = ["code", "name"]
     else:
         raise ValueError(f"unexpected A-share list columns: {list(membership.columns)}")
-    members["code"] = members["code"].astype(str).str.extract(r"(\\d{6})", expand=False)
+    members["code"] = members["code"].astype(str).str.extract(r"(\d{6})", expand=False)
     members = members.dropna(subset=["code"])
     members["name"] = members["name"].astype(str).str.strip()
     members = members.loc[members["code"].str.startswith(("0", "3", "6"))]
