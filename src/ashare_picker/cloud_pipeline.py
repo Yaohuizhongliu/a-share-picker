@@ -259,7 +259,24 @@ def fetch_universe(
     history_start: pd.Timestamp,
     max_workers: int,
 ) -> tuple[pd.DataFrame, dict[str, pd.DataFrame], list[str]]:
-    membership = retry("Shanghai-Shenzhen A-share list", ak.stock_info_a_code_name, attempts=3)
+    membership = None
+    source_errors: list[str] = []
+    for label, source in (
+        ("Tencent full-market list", ak.stock_zh_a_spot_tx),
+        ("Eastmoney full-market list", ak.stock_zh_a_spot_em),
+        ("exchange A-share list", ak.stock_info_a_code_name),
+    ):
+        try:
+            candidate = retry(label, source, attempts=3)
+            if len(candidate) >= 5000:
+                membership = candidate
+                LOG.info("universe source %s returned %s rows", label, len(candidate))
+                break
+            source_errors.append(f"{label} returned only {len(candidate)} rows")
+        except Exception as exc:
+            source_errors.append(f"{label}: {exc}")
+    if membership is None:
+        raise RuntimeError("all full-market universe sources failed: " + " | ".join(source_errors))
     if {"code", "name"}.issubset(membership.columns):
         members = membership[["code", "name"]].copy()
     elif {"代码", "名称"}.issubset(membership.columns):
@@ -267,7 +284,8 @@ def fetch_universe(
         members.columns = ["code", "name"]
     else:
         raise ValueError(f"unexpected A-share list columns: {list(membership.columns)}")
-    members["code"] = members["code"].astype(str).str.split(".").str[0].str.zfill(6)
+    members["code"] = members["code"].astype(str).str.extract(r"(\\d{6})", expand=False)
+    members = members.dropna(subset=["code"])
     members["name"] = members["name"].astype(str).str.strip()
     members = members.loc[members["code"].str.startswith(("0", "3", "6"))]
     members = members.drop_duplicates("code").reset_index(drop=True)
