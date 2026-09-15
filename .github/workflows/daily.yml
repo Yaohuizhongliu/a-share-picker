@@ -46,6 +46,9 @@ jobs:
       - name: Walk-forward strategy research
         run: python -m ashare_picker.research_optimizer --config config/default.yml --report-dir reports/latest
 
+      - name: Online adaptive July-September research
+        run: python -m ashare_picker.adaptive_walkforward --config config/default.yml --report-dir reports/latest
+
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         with:
