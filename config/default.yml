@@ -5,12 +5,12 @@ period:
 
 download:
   adjust: "qfq"
-  history_calendar_days: 180
+  history_calendar_days: 300
   cache_hours: 18
   retries: 4
   retry_base_seconds: 1.5
   request_pause_seconds: 0.15
-  max_workers: 6
+  max_workers: 24
 
 universe:
   top_industries: 10

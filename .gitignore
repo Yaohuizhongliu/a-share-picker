@@ -7,3 +7,4 @@ venv/
 data/cache/
 reports/latest/*.tmp
 .DS_Store
+\nreports/latest/all_market_prices.csv.gz\n

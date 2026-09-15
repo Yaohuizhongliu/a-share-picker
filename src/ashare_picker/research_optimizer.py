@@ -15,7 +15,9 @@ LOG = logging.getLogger("ashare_picker.optimizer")
 
 
 def load_inputs(report_dir: Path) -> pd.DataFrame:
-    prices = pd.read_csv(report_dir / "daily_prices.csv", dtype={"code": str})
+    all_market_path = report_dir / "all_market_prices.csv.gz"
+    price_path = all_market_path if all_market_path.exists() else report_dir / "daily_prices.csv"
+    prices = pd.read_csv(price_path, dtype={"code": str})
     industries = pd.read_csv(report_dir / "universe_industries.csv", dtype={"code": str})
     prices["code"] = prices["code"].str.zfill(6)
     industries["code"] = industries["code"].str.zfill(6)

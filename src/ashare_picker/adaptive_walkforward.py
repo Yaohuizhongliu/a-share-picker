@@ -104,30 +104,51 @@ def rolling_gate(result: dict[str, Any]) -> bool:
     )
 
 
+def preselect_library(
+    panel: pd.DataFrame,
+    raw_library: dict[str, tuple[pd.Series, pd.Series]],
+    max_per_day: int = 3,
+    max_per_industry: int = 1,
+) -> dict[str, pd.DataFrame]:
+    """Select daily portfolios once so full-market rolling evaluation stays linear."""
+    selected: dict[str, pd.DataFrame] = {}
+    for name, (mask, score) in raw_library.items():
+        candidates = panel.loc[mask].copy()
+        candidates["signal_score"] = score.loc[candidates.index]
+        candidates = candidates.sort_values(["date", "signal_score"], ascending=[True, False])
+        indices: list[int] = []
+        for _, day in candidates.groupby("date", sort=True):
+            counts: dict[str, int] = {}
+            for idx, row in day.iterrows():
+                industry = str(row["industry"])
+                if counts.get(industry, 0) >= max_per_industry:
+                    continue
+                indices.append(idx)
+                counts[industry] = counts.get(industry, 0) + 1
+                if len(counts) >= max_per_day:
+                    break
+        selected[name] = candidates.loc[indices].copy() if indices else candidates.head(0)
+    return selected
+
+
 def choose_for_date(
     panel: pd.DataFrame,
-    library: dict[str, tuple[pd.Series, pd.Series]],
+    library: dict[str, pd.DataFrame],
     dates: list[pd.Timestamp],
     date_pos: int,
     lookback: int = 40,
 ) -> dict[str, Any]:
     best: dict[str, Any] = {"strategy": "cash", "horizon": 1, "objective": -999.0}
-    for name, (mask, score) in library.items():
+    for name, selected in library.items():
         for horizon in (1, 2, 3):
             cutoff_pos = date_pos - horizon
             if cutoff_pos < 0:
                 continue
             start_pos = max(0, cutoff_pos - lookback + 1)
-            signals = select_signals(
-                panel,
-                mask,
-                score,
-                dates[start_pos],
-                dates[cutoff_pos],
-                horizon,
-                max_per_day=3,
-                max_per_industry=1,
-            )
+            signals = selected.loc[
+                selected["date"].between(dates[start_pos], dates[cutoff_pos])
+                & selected[f"net_return_{horizon}d"].notna()
+            ]
             result = metrics(signals, horizon)
             if not rolling_gate(result):
                 continue
@@ -156,7 +177,7 @@ def walk_forward(
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, Any]]:
     dates = sorted(pd.Timestamp(value) for value in panel["date"].dropna().unique())
     position = {date: idx for idx, date in enumerate(dates)}
-    library = candidate_library(panel)
+    library = preselect_library(panel, candidate_library(panel))
     selected_parts: list[pd.DataFrame] = []
     decisions: list[dict[str, Any]] = []
     for signal_date in [date for date in dates if start <= date <= end]:
@@ -164,10 +185,9 @@ def walk_forward(
         decisions.append({"date": signal_date, **decision})
         if decision["strategy"] == "cash":
             continue
-        mask, score = library[decision["strategy"]]
-        chosen = select_live_signals(
-            panel, mask, score, signal_date, max_per_day=3, max_per_industry=1
-        )
+        chosen = library[decision["strategy"]].loc[
+            library[decision["strategy"]]["date"].eq(signal_date)
+        ].copy()
         if chosen.empty:
             continue
         horizon = int(decision["horizon"])
@@ -185,7 +205,7 @@ def walk_forward(
             "cash_days": int((decisions_frame["strategy"] == "cash").sum()),
         }
     else:
-        generic = trades.rename(columns={"net_return": "net_return_1d"})
+        generic = trades[["date", "net_return"]].rename(columns={"net_return": "net_return_1d"})
         summary = metrics(generic, 1)
         summary["cash_days"] = int((decisions_frame["strategy"] == "cash").sum())
     return trades, decisions_frame, summary
@@ -193,12 +213,13 @@ def walk_forward(
 
 def latest_state(panel: pd.DataFrame, lookback: int = 40) -> tuple[dict[str, Any], pd.DataFrame]:
     dates = sorted(pd.Timestamp(value) for value in panel["date"].dropna().unique())
-    library = candidate_library(panel)
+    library = preselect_library(panel, candidate_library(panel))
     decision = choose_for_date(panel, library, dates, len(dates) - 1, lookback)
     if decision["strategy"] == "cash":
         return decision, panel.loc[panel["date"].lt(dates[-1])].head(0).copy()
-    mask, score = library[decision["strategy"]]
-    signals = select_live_signals(panel, mask, score, dates[-1], max_per_day=3, max_per_industry=1)
+    signals = library[decision["strategy"]].loc[
+        library[decision["strategy"]]["date"].eq(dates[-1])
+    ].copy()
     return decision, signals
 
 

@@ -24,7 +24,7 @@ from .signals import (
 )
 
 LOG = logging.getLogger("ashare_picker.cloud")
-REQUEST_TIMEOUT_SECONDS = 30
+REQUEST_TIMEOUT_SECONDS = 15
 _ORIGINAL_REQUEST = requests.sessions.Session.request
 
 
@@ -87,6 +87,7 @@ def fetch_price(code: str, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFra
             end_date=end.strftime("%Y%m%d"),
             adjust="",
         ),
+        attempts=2,
     )
     return clean_price_frame(frame, start, end)
 
@@ -154,24 +155,88 @@ def load_config(path: str | Path) -> dict[str, Any]:
         return yaml.safe_load(handle)
 
 
+def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]], list[str]]:
+    boards = retry("Eastmoney industry boards", ak.stock_board_industry_name_em, attempts=2)
+    name_column = "板块名称" if "板块名称" in boards else "行业名称"
+    code_column = "板块代码" if "板块代码" in boards else None
+    board_rows = [
+        (idx, str(row[name_column]).strip(), str(row.get(code_column, "")) if code_column else "")
+        for idx, row in boards.iterrows()
+    ]
+    results: list[tuple[int, str, str, pd.DataFrame]] = []
+    errors: list[str] = []
+
+    def worker(item: tuple[int, str, str]) -> tuple[int, str, str, pd.DataFrame]:
+        idx, name, board_code = item
+        frame = retry(
+            f"Eastmoney industry constituents {name}",
+            lambda: ak.stock_board_industry_cons_em(symbol=name),
+            attempts=2,
+        )
+        return idx, name, board_code, frame
+
+    with ThreadPoolExecutor(max_workers=min(max_workers, 12)) as executor:
+        futures = {executor.submit(worker, item): item for item in board_rows}
+        for future in as_completed(futures):
+            item = futures[future]
+            try:
+                results.append(future.result())
+            except Exception as exc:
+                errors.append(f"industry {item[1]}: {exc}")
+
+    mapping: dict[str, dict[str, str]] = {}
+    for _, name, board_code, frame in sorted(results, key=lambda item: item[0]):
+        stock_code_column = "代码" if "代码" in frame else "股票代码"
+        if stock_code_column not in frame:
+            continue
+        for value in frame[stock_code_column]:
+            code = str(value).split(".")[0].zfill(6)
+            if code.startswith(("0", "3", "6")):
+                mapping.setdefault(
+                    code,
+                    {
+                        "industry": name,
+                        "industry_standard": "东方财富行业板块",
+                        "industry_code": board_code,
+                    },
+                )
+    return mapping, errors
+
+
 def fetch_universe(
     as_of: pd.Timestamp,
     history_start: pd.Timestamp,
     max_workers: int,
 ) -> tuple[pd.DataFrame, dict[str, pd.DataFrame], list[str]]:
-    membership = retry("CSI 300 constituents", lambda: ak.index_stock_cons_csindex(symbol="000300"))
-    members = membership[["成分券代码", "成分券名称", "交易所"]].copy()
-    members.columns = ["code", "name", "exchange"]
-    members["code"] = members["code"].astype(str).str.zfill(6)
+    membership = retry("Shanghai-Shenzhen A-share list", ak.stock_info_a_code_name, attempts=3)
+    if {"code", "name"}.issubset(membership.columns):
+        members = membership[["code", "name"]].copy()
+    elif {"代码", "名称"}.issubset(membership.columns):
+        members = membership[["代码", "名称"]].copy()
+        members.columns = ["code", "name"]
+    else:
+        raise ValueError(f"unexpected A-share list columns: {list(membership.columns)}")
+    members["code"] = members["code"].astype(str).str.split(".").str[0].str.zfill(6)
+    members["name"] = members["name"].astype(str).str.strip()
+    members = members.loc[members["code"].str.startswith(("0", "3", "6"))]
     members = members.drop_duplicates("code").reset_index(drop=True)
+    raw_universe_size = len(members)
+    if raw_universe_size < 5000:
+        raise RuntimeError(f"Shanghai-Shenzhen universe unexpectedly below 5000: {raw_universe_size}")
+    members = members.loc[~members["name"].str.contains("ST|退", case=False, regex=True)].copy()
+    members["exchange"] = np.where(members["code"].str.startswith("6"), "上海", "深圳")
 
+    industry_map, industry_errors = fetch_industry_board_map(max_workers)
     prices: dict[str, pd.DataFrame] = {}
     metadata: list[dict[str, str]] = []
-    errors: list[str] = []
+    errors: list[str] = list(industry_errors)
 
     def worker(row: dict[str, str]) -> tuple[dict[str, str], pd.DataFrame]:
         code = row["code"]
-        industry = fetch_industry(code, as_of)
+        industry = industry_map.get(
+            code,
+            {"industry": "未分类", "industry_standard": "缺失", "industry_code": ""},
+        )
         bars = fetch_price(code, history_start, as_of)
         return {**row, **industry}, bars
 
@@ -190,12 +255,17 @@ def fetch_universe(
                 prices[row["code"]] = estimated_flow(bars)
             except Exception as exc:
                 errors.append(f"{row['code']} {row['name']}: {exc}")
-            if completed % 25 == 0 or completed == len(rows):
-                LOG.info("cloud download %s/%s, success=%s, failed=%s", completed, len(rows), len(prices), len(errors))
+            if completed % 250 == 0 or completed == len(rows):
+                LOG.info(
+                    "full-market download %s/%s, success=%s, failed=%s",
+                    completed, len(rows), len(prices), len(errors),
+                )
 
     meta_df = pd.DataFrame(metadata)
-    if meta_df.empty or len(prices) < 100:
-        raise RuntimeError(f"usable price coverage too low: {len(prices)}/{len(rows)}")
+    minimum_coverage = max(4500, int(len(rows) * 0.80))
+    if meta_df.empty or len(prices) < minimum_coverage:
+        raise RuntimeError(f"usable full-market coverage too low: {len(prices)}/{len(rows)}")
+    meta_df["raw_universe_size"] = raw_universe_size
     return meta_df.sort_values("code").reset_index(drop=True), prices, errors
 
 
@@ -421,7 +491,10 @@ def write_outputs(
         item.insert(0, "code", code)
         raw.append(item)
     pd.concat(raw, ignore_index=True).to_csv(
-        output_dir / "daily_prices.csv", index=False, encoding="utf-8-sig"
+        output_dir / "all_market_prices.csv.gz",
+        index=False,
+        encoding="utf-8-sig",
+        compression="gzip",
     )
     (output_dir / "download_errors.txt").write_text("\n".join(errors), encoding="utf-8")
 
@@ -431,7 +504,7 @@ def write_outputs(
     report = f"""# A股云端选股报告
 
 报告运行日：{as_of.date()}；实际行情截至：{last_market_date}。  
-股票池：沪深300当前成分股；成功日线 {len(prices)} 只，行业分类 {metadata['industry'].ne('未分类').sum()} 只，失败 {len(errors)} 只。  
+股票池：沪深全部A股 {int(metadata['raw_universe_size'].max())} 只（排除ST/退市并要求至少65根日线）；成功日线 {len(prices)} 只，行业分类 {metadata['industry'].ne('未分类').sum()} 只，失败 {len(errors)} 只。  
 研究区间：2026-07-01 至 {last_market_date}；9月未结束时，本报告不会填充未来行情。
 
 ## 最新一周细分行业资金方向
@@ -452,10 +525,10 @@ def write_outputs(
 
 ## 口径与限制
 
-- 日线来自新浪财经公开HTTPS接口；股票池来自中证指数公司沪深300成分表；行业归属来自巨潮资讯。
+- 日线来自新浪财经公开HTTPS接口；股票池来自沪深京A股代码表并限定沪深代码；行业归属按东方财富行业板块成分批量映射。
 - 免费公开源没有可审计的逐笔“大单/主力”历史。本报告的 `estimated_net_flow` 使用 Chaikin 价位乘数 × 成交额估算买卖压力；它是量价代理，不是机构持仓，也不应表述为真实“主力建仓”。
 - “成长高于平均”在当前云端口径中使用60日价格动量与同一细分行业比较；`growth_source` 已明确标注。财报同比字段保留为空，避免把价格上涨伪装成财务增长。
-- 原始日线、行业映射、所有候选、逐笔回测和下载失败清单均与本报告一同保存，便于审计。
+- 全市场原始日线以 all_market_prices.csv.gz 保存于当次云端产物；行业映射、所有候选、逐笔回测和下载失败清单同步保存，便于审计。
 - 本项目仅用于研究，不构成投资建议。A股存在涨跌停、停牌和实际成交偏差，任何候选都可能亏损。
 """
     (output_dir / "report.md").write_text(report, encoding="utf-8")
