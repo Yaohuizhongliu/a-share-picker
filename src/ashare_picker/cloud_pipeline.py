@@ -155,22 +155,21 @@ def load_config(path: str | Path) -> dict[str, Any]:
         return yaml.safe_load(handle)
 
 
-def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]], list[str]]:
-    boards = retry("Eastmoney industry boards", ak.stock_board_industry_name_em, attempts=2)
-    name_column = "板块名称" if "板块名称" in boards else "行业名称"
-    code_column = "板块代码" if "板块代码" in boards else None
-    board_rows = [
-        (idx, str(row[name_column]).strip(), str(row.get(code_column, "")) if code_column else "")
-        for idx, row in boards.iterrows()
-    ]
+def _build_industry_map(
+    board_rows: list[tuple[int, str, str]],
+    fetch_components: Callable[[str], pd.DataFrame],
+    component_code_columns: tuple[str, ...],
+    standard: str,
+    max_workers: int,
+) -> tuple[dict[str, dict[str, str]], list[str]]:
     results: list[tuple[int, str, str, pd.DataFrame]] = []
     errors: list[str] = []
 
     def worker(item: tuple[int, str, str]) -> tuple[int, str, str, pd.DataFrame]:
         idx, name, board_code = item
         frame = retry(
-            f"Eastmoney industry constituents {name}",
-            lambda: ak.stock_board_industry_cons_em(symbol=name),
+            f"{standard} constituents {name}",
+            lambda: fetch_components(board_code or name),
             attempts=2,
         )
         return idx, name, board_code, frame
@@ -186,8 +185,10 @@ def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]
 
     mapping: dict[str, dict[str, str]] = {}
     for _, name, board_code, frame in sorted(results, key=lambda item: item[0]):
-        stock_code_column = "代码" if "代码" in frame else "股票代码"
-        if stock_code_column not in frame:
+        stock_code_column = next(
+            (column for column in component_code_columns if column in frame), None
+        )
+        if stock_code_column is None:
             continue
         for value in frame[stock_code_column]:
             code = str(value).split(".")[0].zfill(6)
@@ -196,11 +197,61 @@ def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]
                     code,
                     {
                         "industry": name,
-                        "industry_standard": "东方财富行业板块",
+                        "industry_standard": standard,
                         "industry_code": board_code,
                     },
                 )
     return mapping, errors
+
+
+def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]], list[str]]:
+    try:
+        boards = retry("Eastmoney industry boards", ak.stock_board_industry_name_em, attempts=2)
+        name_column = "板块名称" if "板块名称" in boards else "行业名称"
+        code_column = "板块代码" if "板块代码" in boards else None
+        board_rows = [
+            (idx, str(row[name_column]).strip(), str(row.get(code_column, "")) if code_column else "")
+            for idx, row in boards.iterrows()
+        ]
+        mapping, errors = _build_industry_map(
+            board_rows,
+            lambda symbol: ak.stock_board_industry_cons_em(symbol=symbol),
+            ("代码", "股票代码"),
+            "东方财富行业板块",
+            max_workers,
+        )
+        if len(mapping) >= 4000:
+            return mapping, errors
+        errors.append(f"Eastmoney industry coverage too low: {len(mapping)}")
+    except Exception as exc:
+        errors = [f"Eastmoney industry list unavailable: {exc}"]
+
+    LOG.warning("Eastmoney industry mapping unavailable; falling back to Shenwan level-2")
+    try:
+        indexes = retry(
+            "Shenwan level-2 industry list",
+            lambda: ak.index_realtime_sw(symbol="二级行业"),
+            attempts=3,
+        )
+        board_rows = [
+            (idx, str(row["指数名称"]).strip(), str(row["指数代码"]).strip())
+            for idx, row in indexes.iterrows()
+        ]
+        mapping, sw_errors = _build_industry_map(
+            board_rows,
+            lambda symbol: ak.index_component_sw(symbol=symbol),
+            ("证券代码", "代码"),
+            "申万二级行业",
+            max_workers,
+        )
+        errors.extend(sw_errors)
+        if len(mapping) < 3500:
+            errors.append(f"Shenwan industry coverage low: {len(mapping)}")
+        return mapping, errors
+    except Exception as exc:
+        errors.append(f"Shenwan industry mapping unavailable: {exc}")
+        LOG.warning("industry mapping unavailable; continuing with 未分类")
+        return {}, errors
 
 
 def fetch_universe(
