@@ -1,0 +1,28 @@
+{
+  "july_september": {
+    "trades": 49,
+    "signal_days": 17,
+    "win_rate": 0.4489795918367347,
+    "mean_return": -0.0016003156608991017,
+    "median_return": -0.002884521515735326,
+    "daily_sharpe": -0.6618354448438988,
+    "max_drawdown": -0.05305787538594864,
+    "profit_factor": 0.7923929158940171,
+    "cash_days": 5
+  },
+  "latest_decision": {
+    "strategy": "weak_reversal",
+    "horizon": 3,
+    "objective": 0.0077566591706955445,
+    "lookback_metrics": {
+      "trades": 22,
+      "signal_days": 9,
+      "win_rate": 0.5909090909090909,
+      "mean_return": 0.015257517384119255,
+      "median_return": 0.02247725880876943,
+      "daily_sharpe": 5.785544490722891,
+      "max_drawdown": -0.025518687239774684,
+      "profit_factor": 2.6678797183166867
+    }
+  }
+}
