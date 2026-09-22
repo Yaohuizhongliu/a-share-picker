@@ -1,32 +1,27 @@
 Eastmoney industry list unavailable: Eastmoney industry boards failed after 2 attempts: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
-688826 频准激光: only 25 daily rows
-688836 宇树科技-W: only 24 daily rows
-688801 燧原科技-U: only 7 daily rows
-301717 超纯应材: only 30 daily rows
-688835 高凯技术: only 20 daily rows
-688797 臻宝科技: only 64 daily rows
-001232 嘉立创: only 35 daily rows
-301583 托伦斯: only 52 daily rows
-688828 国仪公司-U: only 30 daily rows
-301707 展芯股份: only 32 daily rows
-301689 电科思仪: only 8 daily rows
-603448 天博智能: only 11 daily rows
-688837 C信诺维: only 4 daily rows
-688825 长鑫科技: only 41 daily rows
-301677 欣兴工具: only 38 daily rows
-301688 格林生物: only 14 daily rows
+688826 频准激光: only 26 daily rows
+688836 宇树科技-W: only 25 daily rows
+301686 N中塑股份: only 1 daily rows
+688801 燧原科技-U: only 8 daily rows
+688835 高凯技术: only 21 daily rows
+301717 超纯应材: only 31 daily rows
+001232 嘉立创: only 36 daily rows
+301583 托伦斯: only 53 daily rows
+688828 国仪公司-U: only 31 daily rows
+301707 展芯股份: only 33 daily rows
+603448 天博智能: only 12 daily rows
+301689 电科思仪: only 9 daily rows
+688825 长鑫科技: only 42 daily rows
+688837 C信诺维: only 5 daily rows
+301677 欣兴工具: only 39 daily rows
+301688 格林生物: only 15 daily rows
+601091 C沈鼓: only 4 daily rows
 689009 九号公司-WD: Sina daily 689009 failed after 2 attempts: No value to decode
-601091 C沈鼓: only 3 daily rows
-001259 利仁科技: Sina daily 001259 failed after 2 attempts: HTTPSConnectionPool(host='finance.sina.com.cn', port=443): Read timed out. (read timeout=15)
-688084 晶品特装: Sina daily 688084 failed after 2 attempts: HTTPSConnectionPool(host='finance.sina.com.cn', port=443): Read timed out. (read timeout=15)
-301699 洛轴股份: only 9 daily rows
-688330 宏力达: Sina daily 688330 failed after 2 attempts: HTTPSConnectionPool(host='finance.sina.com.cn', port=443): Read timed out. (read timeout=15)
-301697 贝特利: only 15 daily rows
-301007 德迈仕: Sina daily 301007 failed after 2 attempts: HTTPSConnectionPool(host='finance.sina.com.cn', port=443): Read timed out. (read timeout=15)
-300007 汉威科技: Sina daily 300007 failed after 2 attempts: HTTPSConnectionPool(host='finance.sina.com.cn', port=443): Read timed out. (read timeout=15)
-688806 泰诺麦博-U: only 45 daily rows
-001399 惠科股份: only 62 daily rows
-301655 绿控传动: only 23 daily rows
-603468 津富士达: only 33 daily rows
-601123 马矿股份: only 15 daily rows
-001248 华润新能源: only 58 daily rows
+301699 洛轴股份: only 10 daily rows
+301697 贝特利: only 16 daily rows
+688806 泰诺麦博-U: only 46 daily rows
+001399 惠科股份: only 63 daily rows
+301655 绿控传动: only 24 daily rows
+603468 津富士达: only 34 daily rows
+601123 马矿股份: only 16 daily rows
+001248 华润新能源: only 59 daily rows

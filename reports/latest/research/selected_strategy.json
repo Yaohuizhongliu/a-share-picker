@@ -20,14 +20,14 @@
   },
   "selection_objective": 0.0034967306495428717,
   "test": {
-    "trades": 130,
-    "signal_days": 26,
-    "win_rate": 0.3769230769230769,
-    "mean_return": -0.004645402052022725,
-    "median_return": -0.00943606431559153,
-    "daily_sharpe": -4.5674645859971745,
-    "max_drawdown": -0.09973977391856581,
-    "profit_factor": 0.6686368911762599
+    "trades": 135,
+    "signal_days": 27,
+    "win_rate": 0.37037037037037035,
+    "mean_return": -0.004993192252782907,
+    "median_return": -0.009366990291262155,
+    "daily_sharpe": -4.974343203941809,
+    "max_drawdown": -0.11237559010882114,
+    "profit_factor": 0.6444690091581976
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
@@ -35,7 +35,7 @@
     "trades": 195,
     "signal_days": 39,
     "win_rate": 0.37948717948717947,
-    "mean_return": -0.00574997929753438,
+    "mean_return": -0.0057499792975343805,
     "median_return": -0.013185365853658437,
     "daily_sharpe": -7.50365786724188,
     "max_drawdown": -0.22016201362093724,
