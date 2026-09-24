@@ -13,16 +13,16 @@
   "latest_decision": {
     "strategy": "weak_reversal",
     "horizon": 3,
-    "objective": 0.0034640821867389085,
+    "objective": 0.002581680417344305,
     "lookback_metrics": {
-      "trades": 30,
-      "signal_days": 11,
-      "win_rate": 0.5,
-      "mean_return": 0.006926139700176947,
-      "median_return": -0.002281102158867963,
-      "daily_sharpe": 6.082989537214371,
-      "max_drawdown": -0.04130452673435081,
-      "profit_factor": 1.5632593421317083
+      "trades": 27,
+      "signal_days": 10,
+      "win_rate": 0.48148148148148145,
+      "mean_return": 0.005725340407604018,
+      "median_return": -0.005938394793926392,
+      "daily_sharpe": 5.282549014739733,
+      "max_drawdown": -0.0413045267343507,
+      "profit_factor": 1.4583040766189364
     }
   }
 }
