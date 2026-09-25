@@ -1,7 +1,7 @@
 Eastmoney industry list unavailable: Eastmoney industry boards failed after 2 attempts: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
-688801 燧原科技-U: only 10 daily rows
-688836 宇树科技-W: only 27 daily rows
 688826 频准激光: only 28 daily rows
+688836 宇树科技-W: only 27 daily rows
+688801 燧原科技-U: only 10 daily rows
 688835 高凯技术: only 23 daily rows
 301717 超纯应材: only 33 daily rows
 301686 C中塑股份: only 3 daily rows
