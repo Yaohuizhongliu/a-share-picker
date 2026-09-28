@@ -22,12 +22,12 @@
   "test": {
     "trades": 140,
     "signal_days": 28,
-    "win_rate": 0.35714285714285715,
-    "mean_return": -0.006060961451857058,
+    "win_rate": 0.35,
+    "mean_return": -0.006190139343541074,
     "median_return": -0.011678002969238887,
-    "daily_sharpe": -5.8688092369609475,
-    "max_drawdown": -0.14325234387971508,
-    "profit_factor": 0.5907622066352362
+    "daily_sharpe": -5.941288286349517,
+    "max_drawdown": -0.14642140862055775,
+    "profit_factor": 0.5843942447034555
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
