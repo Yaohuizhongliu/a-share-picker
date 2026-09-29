@@ -3,26 +3,26 @@
     "trades": 58,
     "signal_days": 20,
     "win_rate": 0.39655172413793105,
-    "mean_return": -0.003352692710046557,
-    "median_return": -0.0035790347157203624,
-    "daily_sharpe": -4.044133695917337,
+    "mean_return": -0.003764541112116266,
+    "median_return": -0.0036861406262849823,
+    "daily_sharpe": -4.418915145023883,
     "max_drawdown": -0.07746162406869406,
-    "profit_factor": 0.6475535251843797,
+    "profit_factor": 0.6233786542283469,
     "cash_days": 8
   },
   "latest_decision": {
-    "strategy": "weak_reversal",
-    "horizon": 3,
-    "objective": 0.0022656586106354266,
+    "strategy": "cross_sectional_reversal",
+    "horizon": 1,
+    "objective": 0.0012505246111557196,
     "lookback_metrics": {
-      "trades": 24,
-      "signal_days": 9,
-      "win_rate": 0.4583333333333333,
-      "mean_return": 0.005458686686839613,
-      "median_return": -0.006506423674335469,
-      "daily_sharpe": 5.019628956854223,
-      "max_drawdown": -0.04130452673435059,
-      "profit_factor": 1.428557865157059
+      "trades": 120,
+      "signal_days": 40,
+      "win_rate": 0.5,
+      "mean_return": 0.0021677698931420065,
+      "median_return": -0.00014099994753675603,
+      "daily_sharpe": 2.2479925969618315,
+      "max_drawdown": -0.040298411321512795,
+      "profit_factor": 1.3226957183331336
     }
   }
 }
