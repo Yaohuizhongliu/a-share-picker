@@ -1,28 +1,28 @@
 {
   "july_september": {
-    "trades": 58,
-    "signal_days": 20,
-    "win_rate": 0.39655172413793105,
-    "mean_return": -0.003764541112116266,
-    "median_return": -0.0036861406262849823,
-    "daily_sharpe": -4.418915145023883,
+    "trades": 61,
+    "signal_days": 21,
+    "win_rate": 0.3770491803278688,
+    "mean_return": -0.0041595079565405835,
+    "median_return": -0.004605259203606392,
+    "daily_sharpe": -4.967265647334079,
     "max_drawdown": -0.07746162406869406,
-    "profit_factor": 0.6233786542283469,
+    "profit_factor": 0.5868491704310483,
     "cash_days": 8
   },
   "latest_decision": {
     "strategy": "cross_sectional_reversal",
     "horizon": 1,
-    "objective": 0.0012505246111557196,
+    "objective": 0.0008455683082481317,
     "lookback_metrics": {
       "trades": 120,
       "signal_days": 40,
-      "win_rate": 0.5,
-      "mean_return": 0.0021677698931420065,
-      "median_return": -0.00014099994753675603,
-      "daily_sharpe": 2.2479925969618315,
+      "win_rate": 0.49166666666666664,
+      "mean_return": 0.001708401598143849,
+      "median_return": -0.00038772064538534633,
+      "daily_sharpe": 1.7647786198657036,
       "max_drawdown": -0.040298411321512795,
-      "profit_factor": 1.3226957183331336
+      "profit_factor": 1.2479487179863056
     }
   }
 }
