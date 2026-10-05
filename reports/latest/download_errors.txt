@@ -1,13 +1,12 @@
 Eastmoney industry list unavailable: Eastmoney industry boards failed after 2 attempts: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
-Shenwan industry mapping unavailable: Shenwan level-2 industry list failed after 3 attempts: HTTPSConnectionPool(host='www.swsresearch.com', port=443): Read timed out. (read timeout=15)
-688836 宇树科技-W: only 30 daily rows
-688826 频准激光: only 31 daily rows
-301716 C鸿富诚: only 2 daily rows
 688801 燧原科技-U: only 13 daily rows
+688826 频准激光: only 31 daily rows
+688836 宇树科技-W: only 30 daily rows
+301716 C鸿富诚: only 2 daily rows
 301717 超纯应材: only 36 daily rows
 688835 高凯技术: only 26 daily rows
-001232 嘉立创: only 41 daily rows
 301686 中塑股份: only 6 daily rows
+001232 嘉立创: only 41 daily rows
 301583 托伦斯: only 58 daily rows
 688828 国仪公司-U: only 36 daily rows
 301689 电科思仪: only 14 daily rows
