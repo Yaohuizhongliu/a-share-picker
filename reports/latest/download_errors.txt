@@ -1,104 +1,14 @@
 Eastmoney industry list unavailable: Eastmoney industry boards failed after 2 attempts: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
-industry 乘用车: 申万二级行业 constituents 乘用车 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 计算机设备: 申万二级行业 constituents 计算机设备 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 通信设备: 申万二级行业 constituents 通信设备 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 软件开发: 申万二级行业 constituents 软件开发 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 小家电: 申万二级行业 constituents 小家电 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 白色家电: 申万二级行业 constituents 白色家电 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 厨卫电器: 申万二级行业 constituents 厨卫电器 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 商用车: 申万二级行业 constituents 商用车 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 照明设备Ⅱ: 申万二级行业 constituents 照明设备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 黑色家电: 申万二级行业 constituents 黑色家电 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry IT服务Ⅱ: 申万二级行业 constituents IT服务Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 食品加工: 申万二级行业 constituents 食品加工 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 家电零部件Ⅱ: 申万二级行业 constituents 家电零部件Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 饮料乳品: 申万二级行业 constituents 饮料乳品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 休闲食品: 申万二级行业 constituents 休闲食品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 非白酒: 申万二级行业 constituents 非白酒 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 服装家纺: 申万二级行业 constituents 服装家纺 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 纺织制造: 申万二级行业 constituents 纺织制造 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 包装印刷: 申万二级行业 constituents 包装印刷 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 调味发酵品Ⅱ: 申万二级行业 constituents 调味发酵品Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 文娱用品: 申万二级行业 constituents 文娱用品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 造纸: 申万二级行业 constituents 造纸 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 饰品: 申万二级行业 constituents 饰品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 家居用品: 申万二级行业 constituents 家居用品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 化学制药: 申万二级行业 constituents 化学制药 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 医疗服务: 申万二级行业 constituents 医疗服务 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 中药Ⅱ: 申万二级行业 constituents 中药Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 物流: 申万二级行业 constituents 物流 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 铁路公路: 申万二级行业 constituents 铁路公路 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 生物制品: 申万二级行业 constituents 生物制品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 电力: 申万二级行业 constituents 电力 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 燃气Ⅱ: 申万二级行业 constituents 燃气Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 白酒Ⅱ: 申万二级行业 constituents 白酒Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 医疗器械: 申万二级行业 constituents 医疗器械 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 房地产开发: 申万二级行业 constituents 房地产开发 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 房地产服务: 申万二级行业 constituents 房地产服务 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 医药商业: 申万二级行业 constituents 医药商业 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 证券Ⅱ: 申万二级行业 constituents 证券Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 互联网电商: 申万二级行业 constituents 互联网电商 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 多元金融: 申万二级行业 constituents 多元金融 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 专业连锁Ⅱ: 申万二级行业 constituents 专业连锁Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 酒店餐饮: 申万二级行业 constituents 酒店餐饮 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 保险Ⅱ: 申万二级行业 constituents 保险Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 一般零售: 申万二级行业 constituents 一般零售 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 通信服务: 申万二级行业 constituents 通信服务 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 贸易Ⅱ: 申万二级行业 constituents 贸易Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 专业服务: 申万二级行业 constituents 专业服务 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 装修建材: 申万二级行业 constituents 装修建材 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 水泥: 申万二级行业 constituents 水泥 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 装修装饰Ⅱ: 申万二级行业 constituents 装修装饰Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 房屋建设Ⅱ: 申万二级行业 constituents 房屋建设Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 电机Ⅱ: 申万二级行业 constituents 电机Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 专业工程: 申万二级行业 constituents 专业工程 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 综合Ⅱ: 申万二级行业 constituents 综合Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 工程咨询服务Ⅱ: 申万二级行业 constituents 工程咨询服务Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 其他电源设备Ⅱ: 申万二级行业 constituents 其他电源设备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 基础建设: 申万二级行业 constituents 基础建设 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 玻璃玻纤: 申万二级行业 constituents 玻璃玻纤 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 光伏设备: 申万二级行业 constituents 光伏设备 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 风电设备: 申万二级行业 constituents 风电设备 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 电池: 申万二级行业 constituents 电池 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 航天装备Ⅱ: 申万二级行业 constituents 航天装备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 航空装备Ⅱ: 申万二级行业 constituents 航空装备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 军工电子Ⅱ: 申万二级行业 constituents 军工电子Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 游戏Ⅱ: 申万二级行业 constituents 游戏Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 电网设备: 申万二级行业 constituents 电网设备 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 广告营销: 申万二级行业 constituents 广告营销 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 航海装备Ⅱ: 申万二级行业 constituents 航海装备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 影视院线: 申万二级行业 constituents 影视院线 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 地面兵装Ⅱ: 申万二级行业 constituents 地面兵装Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 数字媒体: 申万二级行业 constituents 数字媒体 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 出版: 申万二级行业 constituents 出版 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 国有大型银行Ⅱ: 申万二级行业 constituents 国有大型银行Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 城商行Ⅱ: 申万二级行业 constituents 城商行Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 股份制银行Ⅱ: 申万二级行业 constituents 股份制银行Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 煤炭开采: 申万二级行业 constituents 煤炭开采 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 农商行Ⅱ: 申万二级行业 constituents 农商行Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 焦炭Ⅱ: 申万二级行业 constituents 焦炭Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 炼化及贸易: 申万二级行业 constituents 炼化及贸易 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 油服工程: 申万二级行业 constituents 油服工程 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 环境治理: 申万二级行业 constituents 环境治理 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 摩托车及其他: 申万二级行业 constituents 摩托车及其他 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 化妆品: 申万二级行业 constituents 化妆品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 教育: 申万二级行业 constituents 教育 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 航运港口: 申万二级行业 constituents 航运港口 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 旅游及景区: 申万二级行业 constituents 旅游及景区 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 航空机场: 申万二级行业 constituents 航空机场 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 个护用品: 申万二级行业 constituents 个护用品 failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 电视广播Ⅱ: 申万二级行业 constituents 电视广播Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-industry 环保设备Ⅱ: 申万二级行业 constituents 环保设备Ⅱ failed after 2 attempts: "['证券代码', '证券名称', '最新权重', '计入日期'] not in index"
-Shenwan industry coverage low: 1875
-301716 鸿富诚: only 2 daily rows
 688826 频准激光: only 31 daily rows
 688801 燧原科技-U: only 13 daily rows
 688836 宇树科技-W: only 30 daily rows
+301716 鸿富诚: only 2 daily rows
 301717 超纯应材: only 36 daily rows
 688835 高凯技术: only 26 daily rows
 001232 嘉立创: only 41 daily rows
 301686 中塑股份: only 6 daily rows
 301583 托伦斯: only 58 daily rows
+301718 N通则康威: only 0 daily rows
 688828 国仪公司-U: only 36 daily rows
 301707 展芯股份: only 38 daily rows
 301689 电科思仪: only 14 daily rows
@@ -113,9 +23,9 @@ Shenwan industry coverage low: 1875
 301699 洛轴股份: only 15 daily rows
 688806 泰诺麦博-U: only 51 daily rows
 301697 贝特利: only 21 daily rows
+601091 沈鼓集团: only 9 daily rows
 301655 绿控传动: only 29 daily rows
 603468 津富士达: only 39 daily rows
-301569 C联亚药业: only 0 daily rows
-601091 沈鼓集团: only 9 daily rows
+301569 联亚药业: only 0 daily rows
 601123 马矿股份: only 21 daily rows
 001248 华润新能源: only 64 daily rows
