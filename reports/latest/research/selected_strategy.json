@@ -24,11 +24,11 @@
     "trades": 180,
     "signal_days": 36,
     "win_rate": 0.4388888888888889,
-    "mean_return": 0.005591286347588954,
+    "mean_return": 0.0054726781199841874,
     "median_return": -0.03159999999999991,
-    "daily_sharpe": 4.279540308414872,
+    "daily_sharpe": 4.207373073322596,
     "max_drawdown": -0.10024768780545723,
-    "profit_factor": 1.3351109215239252
+    "profit_factor": 1.3256869784459546
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
