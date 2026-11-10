@@ -1,45 +1,44 @@
 {
-  "template": "volume_breakout",
+  "template": "trend_pullback",
   "breadth": 0.4,
   "sector_flow": -0.03,
   "stock_flow": -0.03,
-  "max_vol_rank": 1.0,
-  "momentum": 0.35,
-  "breakout": 0.0,
-  "volume_ratio": 0.8,
-  "horizon": 1,
+  "max_vol_rank": 0.75,
+  "momentum": 0.65,
+  "pullback_rank": 0.45,
+  "horizon": 3,
   "validation_sample_sufficient": true,
   "validation": {
     "trades": 55,
     "signal_days": 11,
-    "win_rate": 0.45454545454545453,
-    "mean_return": 0.007340378834489694,
-    "median_return": -0.008822222222222242,
-    "daily_sharpe": 5.667545056966457,
-    "max_drawdown": -0.03159999999999985,
-    "profit_factor": 1.4748357005119164
+    "win_rate": 0.41818181818181815,
+    "mean_return": 0.004300325105001716,
+    "median_return": -0.03159999999999991,
+    "daily_sharpe": 2.72796122688512,
+    "max_drawdown": -0.03258067428048794,
+    "profit_factor": 1.2516274326703145
   },
-  "selection_objective": 0.006761087759617678,
+  "selection_objective": 0.0036358117347546565,
   "test": {
     "trades": 180,
     "signal_days": 36,
-    "win_rate": 0.3888888888888889,
-    "mean_return": -0.0005103880164729456,
-    "median_return": -0.03159999999999991,
-    "daily_sharpe": -0.4031609614839632,
-    "max_drawdown": -0.10996955720327772,
-    "profit_factor": 0.9699278689169576
+    "win_rate": 0.35555555555555557,
+    "mean_return": -0.006304024377200402,
+    "median_return": -0.01519533346870201,
+    "daily_sharpe": -7.191057009682231,
+    "max_drawdown": -0.20626489159822559,
+    "profit_factor": 0.5938122944038764
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
     "horizon": 1,
     "trades": 195,
     "signal_days": 39,
-    "win_rate": 0.36923076923076925,
-    "mean_return": -0.005917002349045683,
+    "win_rate": 0.37435897435897436,
+    "mean_return": -0.005840167473104456,
     "median_return": -0.013185365853658437,
-    "daily_sharpe": -7.767561619834847,
-    "max_drawdown": -0.22250355973183666,
-    "profit_factor": 0.617219238737878
+    "daily_sharpe": -7.656929720979532,
+    "max_drawdown": -0.22016201362093757,
+    "profit_factor": 0.6212624968474686
   }
 }
