@@ -1,66 +1,66 @@
 ﻿date,strategy,horizon,objective,lookback_metrics
-2026-07-01,bull_momentum,3,0.013542493414387038,"{'trades': 13, 'signal_days': 13, 'win_rate': 0.7692307692307693, 'mean_return': 0.035283329436520953, 'median_return': 0.058400000000000056, 'daily_sharpe': 14.348978930343524, 'max_drawdown': -0.031600000000000183, 'profit_factor': 5.838431251843586}"
-2026-07-02,bull_momentum,3,0.012151852583586635,"{'trades': 12, 'signal_days': 12, 'win_rate': 0.75, 'mean_return': 0.033356940222897695, 'median_return': 0.058400000000000056, 'daily_sharpe': 13.198658801500835, 'max_drawdown': -0.03160000000000007, 'profit_factor': 5.222397496569325}"
-2026-07-03,bull_momentum,3,0.010671492989508782,"{'trades': 11, 'signal_days': 11, 'win_rate': 0.7272727272727273, 'mean_return': 0.0310802984249793, 'median_return': 0.058400000000000056, 'daily_sharpe': 11.958860904947837, 'max_drawdown': -0.031600000000000183, 'profit_factor': 4.6063637412950635}"
-2026-07-06,bull_momentum,3,0.009092442755825738,"{'trades': 10, 'signal_days': 10, 'win_rate': 0.7, 'mean_return': 0.028348328267477223, 'median_return': 0.058400000000000056, 'daily_sharpe': 10.606894519905103, 'max_drawdown': -0.031600000000000183, 'profit_factor': 3.9903299860208015}"
-2026-07-07,bull_momentum,2,0.009950142857142862,"{'trades': 8, 'signal_days': 8, 'win_rate': 0.75, 'mean_return': 0.035900000000000036, 'median_return': 0.058400000000000056, 'daily_sharpe': 13.679039385809173, 'max_drawdown': -0.031600000000000295, 'profit_factor': 5.5443037974683556}"
-2026-07-08,bull_momentum,3,0.009900142857142863,"{'trades': 8, 'signal_days': 8, 'win_rate': 0.75, 'mean_return': 0.035900000000000036, 'median_return': 0.058400000000000056, 'daily_sharpe': 13.679039385809173, 'max_drawdown': -0.031600000000000295, 'profit_factor': 5.5443037974683556}"
-2026-07-09,cash,1,-999.0,
-2026-07-10,cash,1,-999.0,
-2026-07-13,cash,1,-999.0,
-2026-07-14,cash,1,-999.0,
+2026-07-01,bull_momentum,3,0.0060441157453152245,"{'trades': 39, 'signal_days': 13, 'win_rate': 0.46153846153846156, 'mean_return': 0.009938461538461537, 'median_return': -0.031600000000000024, 'daily_sharpe': 5.473677805456642, 'max_drawdown': -0.033149440000000197, 'profit_factor': 1.5840867992766714}"
+2026-07-02,bull_momentum,3,0.00485878335189873,"{'trades': 36, 'signal_days': 12, 'win_rate': 0.4444444444444444, 'mean_return': 0.0084, 'median_return': -0.031600000000000024, 'daily_sharpe': 4.513778904642977, 'max_drawdown': -0.033149440000000197, 'profit_factor': 1.4784810126582268}"
+2026-07-03,bull_momentum,3,0.0052642502733221816,"{'trades': 33, 'signal_days': 11, 'win_rate': 0.45454545454545453, 'mean_return': 0.009309090909090907, 'median_return': -0.031600000000000024, 'daily_sharpe': 4.796822354662961, 'max_drawdown': -0.033149440000000197, 'profit_factor': 1.5400843881856525}"
+2026-07-06,bull_momentum,3,0.005719574491139239,"{'trades': 30, 'signal_days': 10, 'win_rate': 0.4666666666666667, 'mean_return': 0.010399999999999998, 'median_return': -0.03159999999999997, 'daily_sharpe': 5.119374961848364, 'max_drawdown': -0.033149439999999974, 'profit_factor': 1.6170886075949353}"
+2026-07-07,bull_momentum,3,0.0062348508367973485,"{'trades': 27, 'signal_days': 9, 'win_rate': 0.48148148148148145, 'mean_return': 0.01173333333333333, 'median_return': -0.03159999999999991, 'daily_sharpe': 5.492534063142672, 'max_drawdown': -0.033149440000000086, 'profit_factor': 1.7160940325497274}"
+2026-07-08,bull_momentum,1,0.0076017247909967575,"{'trades': 18, 'signal_days': 6, 'win_rate': 0.6666666666666666, 'mean_return': 0.016536483206896022, 'median_return': 0.018017733673982562, 'daily_sharpe': 9.167228503326996, 'max_drawdown': -0.0303173100871732, 'profit_factor': 2.602442016645849}"
+2026-07-09,bull_momentum,2,0.007631742490250948,"{'trades': 18, 'signal_days': 6, 'win_rate': 0.5555555555555556, 'mean_return': 0.01691851851851853, 'median_return': 0.04506666666666675, 'daily_sharpe': 7.782452432260715, 'max_drawdown': -0.033149440000000086, 'profit_factor': 2.204641350210969}"
+2026-07-10,bull_momentum,3,0.008299319661025985,"{'trades': 18, 'signal_days': 6, 'win_rate': 0.5555555555555556, 'mean_return': 0.01840000000000001, 'median_return': 0.058400000000000056, 'daily_sharpe': 8.039538657048778, 'max_drawdown': -0.033149440000000086, 'profit_factor': 2.310126582278479}"
+2026-07-13,bull_momentum,3,0.003936717348282096,"{'trades': 15, 'signal_days': 5, 'win_rate': 0.4666666666666667, 'mean_return': 0.010400000000000001, 'median_return': -0.031600000000000024, 'daily_sharpe': 4.826593001279466, 'max_drawdown': -0.033149440000000086, 'profit_factor': 1.6170886075949356}"
+2026-07-14,bull_momentum,3,0.0016475220499095773,"{'trades': 12, 'signal_days': 4, 'win_rate': 0.4166666666666667, 'mean_return': 0.005899999999999993, 'median_return': -0.031600000000000024, 'daily_sharpe': 2.48110331993863, 'max_drawdown': -0.033149440000000197, 'profit_factor': 1.3200723327305595}"
 2026-07-15,cash,1,-999.0,
 2026-07-16,cash,1,-999.0,
 2026-07-17,cash,1,-999.0,
 2026-07-20,cash,1,-999.0,
-2026-07-21,cash,1,-999.0,
-2026-07-22,cash,1,-999.0,
-2026-07-23,cash,1,-999.0,
-2026-07-24,cash,1,-999.0,
-2026-07-27,cash,1,-999.0,
-2026-07-28,cash,1,-999.0,
-2026-07-29,cash,1,-999.0,
-2026-07-30,cash,1,-999.0,
-2026-07-31,cash,1,-999.0,
-2026-08-03,cash,1,-999.0,
-2026-08-04,cash,1,-999.0,
-2026-08-05,cash,1,-999.0,
-2026-08-06,cash,1,-999.0,
-2026-08-07,cash,1,-999.0,
-2026-08-10,cash,1,-999.0,
-2026-08-11,cash,1,-999.0,
-2026-08-12,cash,1,-999.0,
-2026-08-13,cash,1,-999.0,
-2026-08-14,weak_reversal,2,-0.00044098526513439466,"{'trades': 12, 'signal_days': 12, 'win_rate': 0.5833333333333334, 'mean_return': 0.0032985881503122642, 'median_return': 0.002498917673578284, 'daily_sharpe': 1.8339272269611517, 'max_drawdown': -0.09183587449600017, 'profit_factor': 1.3917444561233985}"
-2026-08-17,weak_reversal,2,-0.000851845498970004,"{'trades': 11, 'signal_days': 11, 'win_rate': 0.5454545454545454, 'mean_return': 0.002384017697940436, 'median_return': 0.0015558185404338967, 'daily_sharpe': 1.2716195989764065, 'max_drawdown': -0.09183587449600006, 'profit_factor': 1.2595348477645412}"
-2026-08-18,weak_reversal,2,-0.0008129206179171147,"{'trades': 10, 'signal_days': 10, 'win_rate': 0.6, 'mean_return': 0.0026528857889780025, 'median_return': 0.002498917673578284, 'daily_sharpe': 1.3430203154241762, 'max_drawdown': -0.09183587449600017, 'profit_factor': 1.2633440600681423}"
-2026-08-19,weak_reversal,1,-0.00012074656735782036,"{'trades': 8, 'signal_days': 8, 'win_rate': 0.375, 'mean_return': 0.0019180352841774084, 'median_return': -0.0057411561351491495, 'daily_sharpe': 0.9793591544804856, 'max_drawdown': -0.042280503383970935, 'profit_factor': 1.1790227941870213}"
-2026-08-20,weak_reversal,2,0.0013410074123755453,"{'trades': 8, 'signal_days': 8, 'win_rate': 0.625, 'mean_return': 0.006180099005769816, 'median_return': 0.002498917673578284, 'daily_sharpe': 2.989186367811805, 'max_drawdown': -0.03160000000000007, 'profit_factor': 1.7150989286563783}"
-2026-08-21,weak_reversal,3,0.0009331636288734525,"{'trades': 8, 'signal_days': 8, 'win_rate': 0.5, 'mean_return': 0.005105281171381306, 'median_return': -0.001277354672888819, 'daily_sharpe': 2.2351813225791037, 'max_drawdown': -0.03160000000000007, 'profit_factor': 1.3767457708110162}"
-2026-08-24,cash,1,-999.0,
-2026-08-25,cash,1,-999.0,
-2026-08-26,cash,1,-999.0,
-2026-08-27,cash,1,-999.0,
-2026-08-28,cash,1,-999.0,
-2026-08-31,cash,1,-999.0,
-2026-09-01,cash,1,-999.0,
-2026-09-02,cash,1,-999.0,
-2026-09-03,cash,1,-999.0,
-2026-09-04,cash,1,-999.0,
-2026-09-07,cross_sectional_reversal,1,-0.0002536452553893844,"{'trades': 38, 'signal_days': 38, 'win_rate': 0.4473684210526316, 'mean_return': 0.0016016456671643755, 'median_return': -0.002895336787564716, 'daily_sharpe': 1.0252586352354531, 'max_drawdown': -0.07407485796706104, 'profit_factor': 1.1899856410299146}"
-2026-09-08,cross_sectional_reversal,1,0.0003376288109192295,"{'trades': 38, 'signal_days': 38, 'win_rate': 0.47368421052631576, 'mean_return': 0.002473100003940902, 'median_return': -0.0016, 'daily_sharpe': 1.6239823661917498, 'max_drawdown': -0.07407485796706093, 'profit_factor': 1.325460474178359}"
-2026-09-09,cross_sectional_reversal,1,-0.0004611224727241747,"{'trades': 38, 'signal_days': 38, 'win_rate': 0.4473684210526316, 'mean_return': 0.0014680504002274545, 'median_return': -0.002895336787564716, 'daily_sharpe': 0.9614598021092259, 'max_drawdown': -0.08000858776761555, 'profit_factor': 1.1814877222745552}"
-2026-09-10,cash,1,-999.0,
-2026-09-11,cash,1,-999.0,
-2026-09-14,cash,1,-999.0,
-2026-09-15,cash,1,-999.0,
-2026-09-16,cash,1,-999.0,
-2026-09-17,cash,1,-999.0,
-2026-09-18,cash,1,-999.0,
-2026-09-21,cash,1,-999.0,
-2026-09-22,cash,1,-999.0,
-2026-09-23,cash,1,-999.0,
-2026-09-24,cash,1,-999.0,
-2026-09-28,cash,1,-999.0,
-2026-09-29,cash,1,-999.0,
+2026-07-21,weak_defensive_flow,1,-0.0004620692726136396,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.5, 'mean_return': 0.001289920418536696, 'median_return': -0.0006157480314960648, 'daily_sharpe': 1.3021558754255491, 'max_drawdown': -0.08681637955636623, 'profit_factor': 1.124081636548209}"
+2026-07-22,weak_defensive_flow,1,0.00025066991611125697,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.525, 'mean_return': 0.0021056408392902282, 'median_return': 0.0008208784043603381, 'daily_sharpe': 2.188726767500266, 'max_drawdown': -0.08681637955636656, 'profit_factor': 1.2144166808845225}"
+2026-07-23,weak_defensive_flow,1,-7.177773887898867e-05,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.525, 'mean_return': 0.0017357338247120612, 'median_return': 0.0008208784043603381, 'daily_sharpe': 1.7858044702771332, 'max_drawdown': -0.08681637955636645, 'profit_factor': 1.1785200166343006}"
+2026-07-24,weak_defensive_flow,1,4.431963972934862e-05,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.525, 'mean_return': 0.0018679942927359698, 'median_return': 0.0008208784043603381, 'daily_sharpe': 1.935698607651814, 'max_drawdown': -0.08681637955636623, 'profit_factor': 1.196728437696089}"
+2026-07-27,weak_defensive_flow,1,-0.00020924766785440987,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.525, 'mean_return': 0.0015463098574428976, 'median_return': 0.0008208784043603381, 'daily_sharpe': 1.6224669641408602, 'max_drawdown': -0.08548427127937097, 'profit_factor': 1.1668620566416026}"
+2026-07-28,weak_defensive_flow,1,0.0003131617984416062,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.5333333333333333, 'mean_return': 0.002143380990782, 'median_return': 0.0011414004384535006, 'daily_sharpe': 2.2421155250722213, 'max_drawdown': -0.08548427127937108, 'profit_factor': 1.2377567842963746}"
+2026-07-29,weak_defensive_flow,1,0.0006033859775065801,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.5333333333333333, 'mean_return': 0.0022271127497273738, 'median_return': 0.001681873882846731, 'daily_sharpe': 2.3235976334201696, 'max_drawdown': -0.07463122652974108, 'profit_factor': 1.2470448174719735}"
+2026-07-30,weak_defensive_flow,1,0.0010750042687679559,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.5583333333333333, 'mean_return': 0.0027645005604653343, 'median_return': 0.002605453225061051, 'daily_sharpe': 2.934981411142683, 'max_drawdown': -0.07463122652974119, 'profit_factor': 1.3203792692832885}"
+2026-07-31,weak_defensive_flow,1,0.0011570759438257455,"{'trades': 120, 'signal_days': 40, 'win_rate': 0.5583333333333333, 'mean_return': 0.0028582251171197157, 'median_return': 0.003578176082130892, 'daily_sharpe': 3.043252672977814, 'max_drawdown': -0.0746312265297413, 'profit_factor': 1.3319548745006735}"
+2026-08-03,weak_defensive_flow,1,0.0012845417518919993,"{'trades': 117, 'signal_days': 39, 'win_rate': 0.5641025641025641, 'mean_return': 0.0030150923308679624, 'median_return': 0.0042670143415906485, 'daily_sharpe': 3.1758892798855847, 'max_drawdown': -0.07463122652974141, 'profit_factor': 1.348222773194346}"
+2026-08-04,weak_defensive_flow,1,0.0016892025637175348,"{'trades': 114, 'signal_days': 38, 'win_rate': 0.5789473684210527, 'mean_return': 0.0034912192942947004, 'median_return': 0.004774421061184688, 'daily_sharpe': 3.701455239891413, 'max_drawdown': -0.07463122652974119, 'profit_factor': 1.4112353775253832}"
+2026-08-05,cross_sectional_reversal,1,0.0019310419663337718,"{'trades': 113, 'signal_days': 38, 'win_rate': 0.504424778761062, 'mean_return': 0.004272111890003037, 'median_return': 0.00043252032520317975, 'daily_sharpe': 3.183313663411036, 'max_drawdown': -0.09500730195509477, 'profit_factor': 1.343326373563941}"
+2026-08-06,cross_sectional_reversal,1,0.001727082567054609,"{'trades': 113, 'signal_days': 38, 'win_rate': 0.49557522123893805, 'mean_return': 0.004035323856191834, 'median_return': -0.0012055226824458462, 'daily_sharpe': 3.015716158956582, 'max_drawdown': -0.09500730195509466, 'profit_factor': 1.3248024495808297}"
+2026-08-07,cross_sectional_reversal,1,0.0022738478347537824,"{'trades': 113, 'signal_days': 38, 'win_rate': 0.5132743362831859, 'mean_return': 0.004667780667511643, 'median_return': 0.0023215686274509666, 'daily_sharpe': 3.456092774469603, 'max_drawdown': -0.09500730195509455, 'profit_factor': 1.3875674082199958}"
+2026-08-10,cross_sectional_reversal,1,0.0017675939265456024,"{'trades': 113, 'signal_days': 38, 'win_rate': 0.504424778761062, 'mean_return': 0.004047017076113732, 'median_return': 0.00043252032520317975, 'daily_sharpe': 3.094522652821022, 'max_drawdown': -0.09355699314412536, 'profit_factor': 1.3352713981497215}"
+2026-08-11,weak_defensive_flow,1,0.002439899116475755,"{'trades': 99, 'signal_days': 33, 'win_rate': 0.5757575757575758, 'mean_return': 0.0038656262182844665, 'median_return': 0.0042670143415906485, 'daily_sharpe': 4.0495281025358425, 'max_drawdown': -0.04963821748222719, 'profit_factor': 1.4448155102606892}"
+2026-08-12,weak_defensive_flow,1,0.0030719103152681976,"{'trades': 96, 'signal_days': 32, 'win_rate': 0.59375, 'mean_return': 0.004629370035752668, 'median_return': 0.004774421061184688, 'daily_sharpe': 4.986815429671182, 'max_drawdown': -0.04963821748222719, 'profit_factor': 1.5564791780242426}"
+2026-08-13,weak_defensive_flow,1,0.003224253836676079,"{'trades': 93, 'signal_days': 31, 'win_rate': 0.6021505376344086, 'mean_return': 0.004830317456260819, 'median_return': 0.004851612903225712, 'daily_sharpe': 5.1339630485214105, 'max_drawdown': -0.0496382174822273, 'profit_factor': 1.6108278243052847}"
+2026-08-14,weak_defensive_flow,1,0.0033859952234616573,"{'trades': 90, 'signal_days': 30, 'win_rate': 0.6111111111111112, 'mean_return': 0.005044661371469513, 'median_return': 0.005078845125646094, 'daily_sharpe': 5.288570650396817, 'max_drawdown': -0.04963821748222719, 'profit_factor': 1.6753957339046004}"
+2026-08-17,weak_defensive_flow,1,0.0030416025243012986,"{'trades': 87, 'signal_days': 29, 'win_rate': 0.6091954022988506, 'mean_return': 0.0046632857999364735, 'median_return': 0.004851612903225712, 'daily_sharpe': 4.850097627503433, 'max_drawdown': -0.04963821748222719, 'profit_factor': 1.6181551973664758}"
+2026-08-18,cross_sectional_reversal,3,0.0037601860257230313,"{'trades': 113, 'signal_days': 38, 'win_rate': 0.4778761061946903, 'mean_return': 0.006447441914757551, 'median_return': -0.005916546762589968, 'daily_sharpe': 4.428138622594185, 'max_drawdown': -0.09183587449600017, 'profit_factor': 1.4600115896200727}"
+2026-08-19,weak_defensive_flow,1,0.0037342823498346858,"{'trades': 81, 'signal_days': 27, 'win_rate': 0.6296296296296297, 'mean_return': 0.004892647128598399, 'median_return': 0.005306077348066475, 'daily_sharpe': 4.9188956195168965, 'max_drawdown': -0.02239098569612874, 'profit_factor': 1.7219730048193418}"
+2026-08-20,weak_defensive_flow,1,0.004749846118254422,"{'trades': 78, 'signal_days': 26, 'win_rate': 0.6538461538461539, 'mean_return': 0.0060928796739578945, 'median_return': 0.006705129708748749, 'daily_sharpe': 6.538226748247994, 'max_drawdown': -0.02006347522686014, 'profit_factor': 2.0112052016913973}"
+2026-08-21,weak_defensive_flow,1,0.005642101868136837,"{'trades': 75, 'signal_days': 25, 'win_rate': 0.68, 'mean_return': 0.007210851271172619, 'median_return': 0.006787096774193692, 'daily_sharpe': 8.216099532001106, 'max_drawdown': -0.020063475226859917, 'profit_factor': 2.3372936888482037}"
+2026-08-24,weak_reversal,1,0.0062788564920678485,"{'trades': 38, 'signal_days': 16, 'win_rate': 0.6578947368421053, 'mean_return': 0.011159823110828526, 'median_return': 0.0066035834652367524, 'daily_sharpe': 6.900884994519994, 'max_drawdown': -0.07038758764788688, 'profit_factor': 2.510562340364475}"
+2026-08-25,weak_defensive_flow,1,0.006116138393328723,"{'trades': 72, 'signal_days': 24, 'win_rate': 0.6944444444444444, 'mean_return': 0.00784863231393979, 'median_return': 0.006768243313236823, 'daily_sharpe': 9.534233766881885, 'max_drawdown': -0.020063475226860028, 'profit_factor': 2.78248997888883}"
+2026-08-26,weak_defensive_flow,1,0.005594054371183387,"{'trades': 69, 'signal_days': 23, 'win_rate': 0.6956521739130435, 'mean_return': 0.007249403259987424, 'median_return': 0.006749389852279954, 'daily_sharpe': 8.838645845467097, 'max_drawdown': -0.020063475226860028, 'profit_factor': 2.7524789788618294}"
+2026-08-27,weak_defensive_flow,3,0.004927084704689348,"{'trades': 72, 'signal_days': 24, 'win_rate': 0.5972222222222222, 'mean_return': 0.007482902609859069, 'median_return': 0.00802464799170004, 'daily_sharpe': 5.88442944206005, 'max_drawdown': -0.055527654666948756, 'profit_factor': 1.8763543122284656}"
+2026-08-28,weak_defensive_flow,3,0.0041523894742186655,"{'trades': 69, 'signal_days': 23, 'win_rate': 0.5942028985507246, 'mean_return': 0.006573463592896418, 'median_return': 0.00801538461538458, 'daily_sharpe': 5.183459351897962, 'max_drawdown': -0.055527654666948534, 'profit_factor': 1.7777453635038791}"
+2026-08-31,weak_reversal,1,0.004546550443643682,"{'trades': 26, 'signal_days': 11, 'win_rate': 0.6153846153846154, 'mean_return': 0.009147101584096711, 'median_return': 0.0066035834652367524, 'daily_sharpe': 3.842019276936002, 'max_drawdown': -0.046577630672617665, 'profit_factor': 2.0533477449135003}"
+2026-09-01,weak_reversal,1,0.006219376497047371,"{'trades': 23, 'signal_days': 10, 'win_rate': 0.6521739130434783, 'mean_return': 0.012186011846583944, 'median_return': 0.006637232289950658, 'daily_sharpe': 5.037241899168745, 'max_drawdown': -0.03368614313766716, 'profit_factor': 2.7239428005764412}"
+2026-09-02,weak_reversal,1,0.00673393245618309,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.6818181818181818, 'mean_return': 0.01334632559816772, 'median_return': 0.0068459174825047835, 'daily_sharpe': 6.428645936661802, 'max_drawdown': -0.03160000000000007, 'profit_factor': 2.967443800223887}"
+2026-09-03,weak_reversal,1,0.00673393245618309,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.6818181818181818, 'mean_return': 0.01334632559816772, 'median_return': 0.0068459174825047835, 'daily_sharpe': 6.428645936661802, 'max_drawdown': -0.03160000000000007, 'profit_factor': 2.967443800223887}"
+2026-09-04,weak_reversal,3,0.00721616385881406,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.5909090909090909, 'mean_return': 0.014579902375171004, 'median_return': 0.020641384736428004, 'daily_sharpe': 6.137439954099488, 'max_drawdown': -0.033149440000000086, 'profit_factor': 2.280406256575957}"
+2026-09-07,weak_reversal,3,0.00721616385881406,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.5909090909090909, 'mean_return': 0.014579902375171004, 'median_return': 0.020641384736428004, 'daily_sharpe': 6.137439954099488, 'max_drawdown': -0.033149440000000086, 'profit_factor': 2.280406256575957}"
+2026-09-08,weak_reversal,3,0.00721616385881406,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.5909090909090909, 'mean_return': 0.014579902375171004, 'median_return': 0.020641384736428004, 'daily_sharpe': 6.137439954099488, 'max_drawdown': -0.033149440000000086, 'profit_factor': 2.280406256575957}"
+2026-09-09,weak_reversal,1,0.007907410752956777,"{'trades': 19, 'signal_days': 8, 'win_rate': 0.6842105263157895, 'mean_return': 0.016758527335016548, 'median_return': 0.008535135135135308, 'daily_sharpe': 7.64286991853599, 'max_drawdown': -0.03160000000000007, 'profit_factor': 3.706689702778083}"
+2026-09-10,weak_reversal,1,0.008706362885159281,"{'trades': 16, 'signal_days': 7, 'win_rate': 0.75, 'mean_return': 0.018745566491608384, 'median_return': 0.015067567567567598, 'daily_sharpe': 7.641642671697473, 'max_drawdown': 0.0, 'profit_factor': 4.859005080310305}"
+2026-09-11,weak_reversal,2,0.010212477340737063,"{'trades': 16, 'signal_days': 7, 'win_rate': 0.6875, 'mean_return': 0.022781967271178566, 'median_return': 0.028918936341659922, 'daily_sharpe': 7.904516972018468, 'max_drawdown': -0.011892072322670533, 'profit_factor': 4.23634879327552}"
+2026-09-14,weak_reversal,3,0.011301323280158959,"{'trades': 16, 'signal_days': 7, 'win_rate': 0.75, 'mean_return': 0.024809227380357658, 'median_return': 0.04262569775108043, 'daily_sharpe': 9.737087468380992, 'max_drawdown': 0.0, 'profit_factor': 4.424241980926741}"
+2026-09-15,weak_reversal,3,0.010854380459968511,"{'trades': 19, 'signal_days': 8, 'win_rate': 0.6842105263157895, 'mean_return': 0.0217155704178301, 'median_return': 0.03930909090909079, 'daily_sharpe': 9.435493138922444, 'max_drawdown': 0.0, 'profit_factor': 3.6002643048976646}"
+2026-09-16,weak_reversal,3,0.01150914148186981,"{'trades': 22, 'signal_days': 9, 'win_rate': 0.6818181818181818, 'mean_return': 0.021446997374478725, 'median_return': 0.03165454545454543, 'daily_sharpe': 10.260544316575382, 'max_drawdown': 0.0, 'profit_factor': 3.838492317049782}"
+2026-09-17,weak_reversal,2,0.008269851538968835,"{'trades': 25, 'signal_days': 10, 'win_rate': 0.6, 'mean_return': 0.0154383327701439, 'median_return': 0.023492936802973974, 'daily_sharpe': 9.338885177817689, 'max_drawdown': -0.03160000000000007, 'profit_factor': 2.6575209732278187}"
+2026-09-18,weak_reversal,2,0.009806230183611377,"{'trades': 28, 'signal_days': 11, 'win_rate': 0.6071428571428571, 'mean_return': 0.017336966029048075, 'median_return': 0.023615387320405957, 'daily_sharpe': 10.633385328516187, 'max_drawdown': -0.03160000000000007, 'profit_factor': 2.940374001814237}"
+2026-09-21,weak_reversal,3,0.010615883663134412,"{'trades': 28, 'signal_days': 11, 'win_rate': 0.6428571428571429, 'mean_return': 0.018810657708230417, 'median_return': 0.020641384736428004, 'daily_sharpe': 12.07813571504098, 'max_drawdown': -0.03160000000000007, 'profit_factor': 3.1648897028254157}"
+2026-09-22,weak_reversal,3,0.00953279065016267,"{'trades': 30, 'signal_days': 11, 'win_rate': 0.6, 'mean_return': 0.01648298441693778, 'median_return': 0.018434605075411104, 'daily_sharpe': 10.976471248183023, 'max_drawdown': -0.03159999999999996, 'profit_factor': 2.677718443691533}"
+2026-09-23,weak_reversal,3,0.006229400881931178,"{'trades': 30, 'signal_days': 11, 'win_rate': 0.5333333333333333, 'mean_return': 0.011119348053301425, 'median_return': 0.01175955489372842, 'daily_sharpe': 8.692369028336149, 'max_drawdown': -0.03160000000000007, 'profit_factor': 1.931946999668831}"
+2026-09-24,weak_reversal,3,0.005564583565761177,"{'trades': 27, 'signal_days': 10, 'win_rate': 0.5185185185185185, 'mean_return': 0.010473349688853436, 'median_return': 0.008390485252140856, 'daily_sharpe': 7.993399457563257, 'max_drawdown': -0.03159999999999996, 'profit_factor': 1.866522835706736}"
+2026-09-28,weak_reversal,3,0.004554399716907456,"{'trades': 24, 'signal_days': 9, 'win_rate': 0.5, 'mean_return': 0.009210485438311928, 'median_return': 0.00041905214987996266, 'daily_sharpe': 7.030381709152432, 'max_drawdown': -0.03160000000000007, 'profit_factor': 1.7499904582487749}"
+2026-09-29,weak_reversal,3,0.003864253538741825,"{'trades': 21, 'signal_days': 8, 'win_rate': 0.47619047619047616, 'mean_return': 0.008489954440010177, 'median_return': -0.007552380952380931, 'daily_sharpe': 6.382026840785188, 'max_drawdown': -0.031600000000000183, 'profit_factor': 1.651601926536788}"
 2026-09-30,cash,1,-999.0,
