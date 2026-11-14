@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import math
 import time
@@ -77,31 +78,61 @@ def clean_price_frame(frame: pd.DataFrame, start: pd.Timestamp, end: pd.Timestam
     return out.drop_duplicates("date").sort_values("date").reset_index(drop=True)
 
 
+def _parse_tencent_price_payload(text: str, symbol: str) -> pd.DataFrame:
+    """Parse Tencent JSONP K-lines without relying on AKShare's HTTP client."""
+    object_start = text.find("{")
+    if object_start < 0:
+        raise ValueError("Tencent response contains no JSON object")
+    payload = json.loads(text[object_start:])
+    stock_data = payload.get("data", {}).get(symbol, {})
+    rows = stock_data.get("day") or stock_data.get("qfqday") or stock_data.get("hfqday") or []
+    if not rows:
+        return pd.DataFrame()
+    raw = pd.DataFrame(rows)
+    fields = [0, 1, 3, 4, 2, 5, 8]
+    if raw.shape[1] <= max(fields):
+        raise ValueError(f"unexpected Tencent K-line width: {raw.shape[1]}")
+    out = raw.iloc[:, fields].copy()
+    out.columns = ["date", "open", "high", "low", "close", "volume", "amount"]
+    multiplier = 1 if symbol.startswith(("sh688", "sh689")) else 100
+    out["volume"] = pd.to_numeric(out["volume"], errors="coerce") * multiplier
+    out["amount"] = pd.to_numeric(out["amount"], errors="coerce") * 10000
+    return out
+
+
 def fetch_price(code: str, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
-    """Fetch Tencent first; keep Sina only as an independent fallback."""
+    """Fetch Tencent directly with a hard timeout; keep Sina as fallback."""
     symbol = stock_symbol(code)
     errors: list[str] = []
-    tencent = getattr(ak, "stock_zh_a_hist_tx", None)
-    if tencent is not None:
-        try:
-            frame = retry(
-                f"Tencent daily {code}",
-                lambda: tencent(
-                    symbol=symbol,
-                    start_date=start.strftime("%Y%m%d"),
-                    end_date=end.strftime("%Y%m%d"),
-                    adjust="",
-                ),
-                attempts=2,
-            )
-            cleaned = clean_price_frame(frame, start, end)
-            if not cleaned.empty:
-                return cleaned
-            errors.append("Tencent returned no usable rows")
-        except Exception as exc:
-            errors.append(f"Tencent: {exc}")
-    else:
-        errors.append("Tencent interface unavailable in installed AKShare")
+    url = "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get"
+    params = {
+        "_var": f"kline_day{start.year}",
+        "param": f"{symbol},day,{start.year}-01-01,{end.year}-12-31,640,",
+        "r": "0.8205512681390605",
+    }
+    try:
+        response = retry(
+            f"Tencent direct daily {code}",
+            lambda: requests.get(
+                url,
+                params=params,
+                headers={
+                    "User-Agent": "Mozilla/5.0",
+                    "Referer": f"https://gu.qq.com/{symbol}/gp",
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            ),
+            attempts=2,
+        )
+        response.raise_for_status()
+        cleaned = clean_price_frame(
+            _parse_tencent_price_payload(response.text, symbol), start, end
+        )
+        if not cleaned.empty:
+            return cleaned
+        errors.append("Tencent returned no usable rows")
+    except Exception as exc:
+        errors.append(f"Tencent: {exc}")
 
     try:
         frame = retry(
