@@ -266,6 +266,30 @@ def _build_industry_map(
     return mapping, errors
 
 
+def load_versioned_industry_map(path: Path | None = None) -> dict[str, dict[str, str]]:
+    """Load the last verified Shenwan mapping when public board APIs are unavailable."""
+    source = path or (Path(__file__).resolve().parents[2] / "data" / "industry_map.csv")
+    if not source.exists():
+        return {}
+    frame = pd.read_csv(source, dtype={"code": str, "industry_code": str})
+    required = {"code", "industry", "industry_standard", "industry_code"}
+    if not required.issubset(frame.columns):
+        raise ValueError(f"versioned industry map missing columns: {sorted(required)}")
+    frame["code"] = frame["code"].astype(str).str.zfill(6)
+    frame = frame.loc[
+        frame["code"].str.startswith(("0", "3", "6"))
+        & frame["industry"].astype(str).ne("未分类")
+    ].drop_duplicates("code")
+    return {
+        str(row.code): {
+            "industry": str(row.industry),
+            "industry_standard": f"{row.industry_standard}(版本化后备)",
+            "industry_code": str(row.industry_code),
+        }
+        for row in frame.itertuples(index=False)
+    }
+
+
 def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]], list[str]]:
     try:
         boards = retry("Eastmoney industry boards", ak.stock_board_industry_name_em, attempts=2)
@@ -307,13 +331,20 @@ def fetch_industry_board_map(max_workers: int) -> tuple[dict[str, dict[str, str]
             max_workers,
         )
         errors.extend(sw_errors)
-        if len(mapping) < 3500:
-            errors.append(f"Shenwan industry coverage low: {len(mapping)}")
-        return mapping, errors
+        if len(mapping) >= 3500:
+            return mapping, errors
+        errors.append(f"Shenwan industry coverage low: {len(mapping)}")
     except Exception as exc:
         errors.append(f"Shenwan industry mapping unavailable: {exc}")
-        LOG.warning("industry mapping unavailable; continuing with 未分类")
-        return {}, errors
+
+    fallback = load_versioned_industry_map()
+    if len(fallback) >= 4000:
+        errors.append(f"using versioned Shenwan fallback: {len(fallback)} stocks")
+        LOG.warning("live industry mapping unavailable; using %s versioned rows", len(fallback))
+        return fallback, errors
+    errors.append(f"versioned industry fallback coverage low: {len(fallback)}")
+    LOG.warning("industry mapping unavailable; continuing with 未分类")
+    return fallback, errors
 
 
 def fetch_universe(
@@ -652,11 +683,11 @@ def write_outputs(
 
 {markdown_table(summary, ['horizon', 'trades', 'win_rate', 'average_return', 'median_return', 'worst_trade', 'best_trade'])}
 
-回测采用信号后下一交易日开盘买入，最长1–3日，止损3%、止盈6%，单边佣金3bp、滑点5bp；同日同时触及止损与止盈时按先止损处理。当前成分股回测存在幸存者偏差，结果不代表未来收益。
+回测采用信号后下一交易日开盘买入，并遵守T+1、最早再下一交易日卖出；持有1–3个隔夜，止损3%、止盈6%，单边佣金3bp、滑点5bp；同日同时触及止损与止盈时按先止损处理。当前成分股回测存在幸存者偏差，结果不代表未来收益。
 
 ## 口径与限制
 
-- 日线来自新浪财经公开HTTPS接口；股票池来自沪深京A股代码表并限定沪深代码；行业归属按东方财富行业板块成分批量映射。
+- 日线主源为腾讯证券公开HTTPS接口（新浪后备）；股票池来自腾讯沪深京A股代码表并限定沪深代码；行业归属优先取实时行业板块映射，接口不可用时使用仓库内版本化申万二级行业后备。
 - 免费公开源没有可审计的逐笔“大单/主力”历史。本报告的 `estimated_net_flow` 使用 Chaikin 价位乘数 × 成交额估算买卖压力；它是量价代理，不是机构持仓，也不应表述为真实“主力建仓”。
 - “成长高于平均”在当前云端口径中使用60日价格动量与同一细分行业比较；`growth_source` 已明确标注。财报同比字段保留为空，避免把价格上涨伪装成财务增长。
 - 全市场原始日线以 all_market_prices.csv.gz 保存于当次云端产物；行业映射、所有候选、逐笔回测和下载失败清单同步保存，便于审计。
