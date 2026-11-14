@@ -192,21 +192,33 @@ def _simulate_trade(
     signal_position: int,
     horizon: int,
     rules: TradeRules,
+    code: str = "",
 ) -> dict[str, Any] | None:
     entry_position = signal_position + 1
-    if entry_position >= len(prices):
+    first_exit_position = entry_position + 1
+    if first_exit_position >= len(prices):
         return None
     entry_row = prices.iloc[entry_position]
     entry = _finite(entry_row["open"])
-    if entry <= 0:
+    prior_close = _finite(prices.iloc[signal_position]["close"])
+    amount = _finite(entry_row.get("amount", 1.0))
+    normalized_code = str(code).zfill(6)
+    price_limit = 0.20 if normalized_code.startswith(("300", "301", "688")) else 0.10
+    if (
+        entry <= 0
+        or prior_close <= 0
+        or amount <= 0
+        or entry >= prior_close * (1.0 + price_limit - 0.002)
+    ):
         return None
     stop = entry * (1.0 - rules.stop_loss)
     target = entry * (1.0 + rules.take_profit)
-    last_position = min(entry_position + horizon - 1, len(prices) - 1)
+    # A-share T+1: do not evaluate exits on the entry session.
+    last_position = min(entry_position + horizon, len(prices) - 1)
     exit_price = _finite(prices.iloc[last_position]["close"])
     exit_reason = "time"
 
-    for position in range(entry_position, last_position + 1):
+    for position in range(first_exit_position, last_position + 1):
         row = prices.iloc[position]
         hit_stop = _finite(row["low"], entry) <= stop
         hit_target = _finite(row["high"], entry) >= target
@@ -230,7 +242,7 @@ def _simulate_trade(
         "entry": entry,
         "exit": exit_price,
         "horizon": horizon,
-        "actual_holding_days": last_position - entry_position + 1,
+        "actual_holding_days": last_position - entry_position,
         "exit_reason": exit_reason,
         "net_return": float(net_return),
     }
@@ -263,7 +275,7 @@ def walk_forward_backtest(
             continue
         last_signal_position = position
         for horizon in range(1, rules.max_holding_days + 1):
-            trade = _simulate_trade(prices, position, horizon, rules)
+            trade = _simulate_trade(prices, position, horizon, rules, code=code)
             if trade is not None:
                 trade.update(
                     {

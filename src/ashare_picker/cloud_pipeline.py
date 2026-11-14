@@ -78,18 +78,49 @@ def clean_price_frame(frame: pd.DataFrame, start: pd.Timestamp, end: pd.Timestam
 
 
 def fetch_price(code: str, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+    """Fetch Tencent first; keep Sina only as an independent fallback."""
     symbol = stock_symbol(code)
-    frame = retry(
-        f"Sina daily {code}",
-        lambda: ak.stock_zh_a_daily(
-            symbol=symbol,
-            start_date=start.strftime("%Y%m%d"),
-            end_date=end.strftime("%Y%m%d"),
-            adjust="",
-        ),
-        attempts=2,
-    )
-    return clean_price_frame(frame, start, end)
+    errors: list[str] = []
+    tencent = getattr(ak, "stock_zh_a_hist_tx", None)
+    if tencent is not None:
+        try:
+            frame = retry(
+                f"Tencent daily {code}",
+                lambda: tencent(
+                    symbol=symbol,
+                    start_date=start.strftime("%Y%m%d"),
+                    end_date=end.strftime("%Y%m%d"),
+                    adjust="",
+                ),
+                attempts=2,
+            )
+            cleaned = clean_price_frame(frame, start, end)
+            if not cleaned.empty:
+                return cleaned
+            errors.append("Tencent returned no usable rows")
+        except Exception as exc:
+            errors.append(f"Tencent: {exc}")
+    else:
+        errors.append("Tencent interface unavailable in installed AKShare")
+
+    try:
+        frame = retry(
+            f"Sina daily {code}",
+            lambda: ak.stock_zh_a_daily(
+                symbol=symbol,
+                start_date=start.strftime("%Y%m%d"),
+                end_date=end.strftime("%Y%m%d"),
+                adjust="",
+            ),
+            attempts=2,
+        )
+        cleaned = clean_price_frame(frame, start, end)
+        if not cleaned.empty:
+            return cleaned
+        errors.append("Sina returned no usable rows")
+    except Exception as exc:
+        errors.append(f"Sina: {exc}")
+    raise RuntimeError(" | ".join(errors))
 
 
 def _nonempty(value: Any) -> bool:

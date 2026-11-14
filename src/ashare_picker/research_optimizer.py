@@ -56,18 +56,30 @@ def _stock_features(group: pd.DataFrame, costs: float, stop_loss: float, take_pr
     out["flow_z"] = (daily_flow.rolling(10).mean() - prior_mean) / prior_std.replace(0, np.nan)
 
     n = len(out)
+    code = str(out["code"].iloc[0]).zfill(6) if "code" in out and not out.empty else ""
+    price_limit = 0.20 if code.startswith(("300", "301", "688")) else 0.10
     for horizon in (1, 2, 3):
         values = np.full(n, np.nan)
-        for signal_pos in range(n - 1):
+        for signal_pos in range(n - 2):
             entry_pos = signal_pos + 1
-            entry = float(out.iloc[entry_pos]["open"])
-            if not np.isfinite(entry) or entry <= 0:
+            entry_row = out.iloc[entry_pos]
+            entry = float(entry_row["open"])
+            prior_close = float(out.iloc[signal_pos]["close"])
+            # A buy at or very near the daily upper limit is not assumed fillable.
+            if (
+                not np.isfinite(entry)
+                or entry <= 0
+                or float(entry_row["amount"]) <= 0
+                or entry >= prior_close * (1.0 + price_limit - 0.002)
+            ):
                 continue
             stop = entry * (1.0 - stop_loss)
             target = entry * (1.0 + take_profit)
-            last_pos = min(entry_pos + horizon - 1, n - 1)
+            # A-share T+1: after buying at the next open, the earliest exit is
+            # the following trading day. Horizon is the number of overnights held.
+            last_pos = min(entry_pos + horizon, n - 1)
             exit_price = float(out.iloc[last_pos]["close"])
-            for pos in range(entry_pos, last_pos + 1):
+            for pos in range(entry_pos + 1, last_pos + 1):
                 row = out.iloc[pos]
                 if float(row["low"]) <= stop:
                     exit_price = stop

@@ -23,7 +23,8 @@ def test_target_enters_next_open_and_charges_costs():
         }
     )
     out = _stock_features(frame, costs=0.0016, stop_loss=0.03, take_profit=0.06)
-    expected = 10.1 / 10.0 - 1.0 - 0.0016
+    # Buy on day 2 open and, under A-share T+1, sell no earlier than day 3.
+    expected = 10.2 / 10.0 - 1.0 - 0.0016
     assert np.isclose(out.loc[0, "net_return_1d"], expected)
 
 
@@ -71,3 +72,21 @@ def test_validation_gate_blocks_negative_or_risky_models():
     assert not passes_validation_gate({**good, "mean_return": -0.001})
     assert not passes_validation_gate({**good, "profit_factor": 0.9})
     assert not passes_validation_gate({**good, "max_drawdown": -0.15})
+
+
+
+def test_limit_up_open_is_not_assumed_fillable():
+    frame = pd.DataFrame(
+        {
+            "code": ["600000"] * 4,
+            "date": pd.date_range("2026-01-01", periods=4),
+            "open": [10.0, 11.0, 11.1, 11.2],
+            "high": [10.0, 11.0, 11.2, 11.3],
+            "low": [10.0, 11.0, 11.0, 11.1],
+            "close": [10.0, 11.0, 11.1, 11.2],
+            "amount": [1e8] * 4,
+            "main_net": [1e7] * 4,
+        }
+    )
+    out = _stock_features(frame, costs=0.0016, stop_loss=0.03, take_profit=0.06)
+    assert np.isnan(out.loc[0, "net_return_1d"])
