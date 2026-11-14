@@ -104,6 +104,25 @@ def rolling_gate(result: dict[str, Any]) -> bool:
     )
 
 
+def global_walkforward_gate(result: dict[str, Any], monthly: pd.DataFrame) -> bool:
+    """Require a durable out-of-sample edge before publishing any live signal."""
+    required = ("mean_return", "profit_factor", "max_drawdown")
+    if any(not np.isfinite(float(result.get(key, np.nan))) for key in required):
+        return False
+    if monthly.empty or "mean_return" not in monthly:
+        return False
+    profitable_months = int(monthly["mean_return"].gt(0).sum())
+    required_profitable_months = max(1, int(np.ceil(len(monthly) / 2)))
+    return bool(
+        int(result.get("trades", 0)) >= 30
+        and int(result.get("signal_days", 0)) >= 10
+        and float(result["mean_return"]) > 0.0005
+        and float(result["profit_factor"]) > 1.05
+        and float(result["max_drawdown"]) > -0.10
+        and profitable_months >= required_profitable_months
+    )
+
+
 def preselect_library(
     panel: pd.DataFrame,
     raw_library: dict[str, tuple[pd.Series, pd.Series]],
@@ -211,6 +230,26 @@ def walk_forward(
     return trades, decisions_frame, summary
 
 
+def monthly_breakdown(trades: pd.DataFrame) -> pd.DataFrame:
+    """Attribute realized walk-forward results by signal month."""
+    columns = [
+        "month", "trades", "signal_days", "win_rate", "mean_return",
+        "median_return", "daily_sharpe", "max_drawdown", "profit_factor",
+    ]
+    if trades.empty:
+        return pd.DataFrame(columns=columns)
+    work = trades.copy()
+    work["month"] = pd.to_datetime(work["date"]).dt.to_period("M").astype(str)
+    rows: list[dict[str, Any]] = []
+    for month, sample in work.groupby("month", sort=True):
+        generic = sample[["date", "net_return"]].rename(
+            columns={"net_return": "net_return_1d"}
+        )
+        result = metrics(generic, 1)
+        rows.append({"month": month, **{key: result.get(key, np.nan) for key in columns[1:]}})
+    return pd.DataFrame(rows, columns=columns)
+
+
 def latest_state(panel: pd.DataFrame, lookback: int = 40) -> tuple[dict[str, Any], pd.DataFrame]:
     dates = sorted(pd.Timestamp(value) for value in panel["date"].dropna().unique())
     library = preselect_library(panel, candidate_library(panel))
@@ -230,12 +269,18 @@ def write_outputs(
     summary: dict[str, Any],
     live_decision: dict[str, Any],
     live_signals: pd.DataFrame,
+    monthly: pd.DataFrame,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     trades.to_csv(output_dir / "adaptive_trades.csv", index=False, encoding="utf-8-sig")
     decisions.to_csv(output_dir / "adaptive_daily_decisions.csv", index=False, encoding="utf-8-sig")
     live_signals.to_csv(output_dir / "adaptive_live_signals.csv", index=False, encoding="utf-8-sig")
-    payload = {"july_september": summary, "latest_decision": live_decision}
+    monthly.to_csv(output_dir / "adaptive_monthly.csv", index=False, encoding="utf-8-sig")
+    payload = {
+        "july_september": summary,
+        "monthly": monthly.to_dict(orient="records"),
+        "latest_decision": live_decision,
+    }
     (output_dir / "adaptive_summary.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, default=float), encoding="utf-8"
     )
@@ -243,6 +288,26 @@ def write_outputs(
     dd_text = "—" if pd.isna(summary["max_drawdown"]) else f"{summary['max_drawdown']:.2%}"
     pf_text = "—" if pd.isna(summary["profit_factor"]) else f"{summary['profit_factor']:.2f}"
     live_names = "、".join(live_signals.get("name", pd.Series(dtype=str)).astype(str).tolist()) or "无"
+    if monthly.empty:
+        monthly_table = "无可用月度交易。"
+    else:
+        rows = [
+            "| 月份 | 交易数 | 信号日 | 胜率 | 平均每笔 | 盈亏比 | 最大回撤 |",
+            "|---|---:|---:|---:|---:|---:|---:|",
+        ]
+        for row in monthly.to_dict(orient="records"):
+            rows.append(
+                f"| {row['month']} | {int(row['trades'])} | {int(row['signal_days'])} | "
+                f"{row['win_rate']:.2%} | {row['mean_return']:.2%} | "
+                f"{row['profit_factor']:.2f} | {row['max_drawdown']:.2%} |"
+            )
+        monthly_table = "\n".join(rows)
+    gate_text = "通过" if live_decision.get("walkforward_gate") else "未通过，强制空仓"
+    local_candidate = live_decision.get("local_candidate", {})
+    local_text = (
+        f"；短窗口原候选为 `{local_candidate.get('strategy')}`"
+        if local_candidate else ""
+    )
     report = f"""# 7–9月在线自适应策略研究
 
 本报告每天只使用当时已经完成的交易结果，在过去40个交易日内选择策略；未来收益不参与当日决策。
@@ -257,11 +322,18 @@ def write_outputs(
 - 盈亏比：{pf_text}
 - 最大回撤：{dd_text}
 
+## 月度归因
+
+{monthly_table}
+
 ## 最新状态
 
 - 策略：`{live_decision['strategy']}`
 - 持有期：{live_decision['horizon']}日
+- 完整样本外总闸门：{gate_text}{local_text}
 - 当前信号：{live_names}
+
+短窗口只负责选择策略；完整7–9月样本外结果还必须达到至少30笔、10个信号日、平均每笔0.05%、盈亏比1.05、最大回撤低于10%，且至少半数月份盈利，才允许发布信号。
 
 策略库只包含六种预先定义的经济逻辑：广义资金趋势、牛市动量、牛市回撤、弱市反转、弱市防御资金、横截面反转。滚动窗口未达到正收益、盈亏比1.10和回撤门槛时自动空仓。
 """
@@ -276,9 +348,25 @@ def run(config_path: str, report_dir_text: str) -> Path:
     trades, decisions, summary = walk_forward(
         panel, pd.Timestamp("2026-07-01"), panel["date"].max(), lookback=40
     )
-    live_decision, live_signals = latest_state(panel, lookback=40)
+    local_decision, local_signals = latest_state(panel, lookback=40)
+    monthly = monthly_breakdown(trades)
+    if global_walkforward_gate(summary, monthly):
+        live_decision = {**local_decision, "walkforward_gate": True}
+        live_signals = local_signals
+    else:
+        live_decision = {
+            "strategy": "cash_global_gate",
+            "horizon": 1,
+            "objective": -999.0,
+            "walkforward_gate": False,
+            "gate_reason": "full walk-forward edge is not sufficiently robust",
+            "local_candidate": local_decision,
+        }
+        live_signals = panel.head(0).copy()
     output_dir = report_dir / "research"
-    write_outputs(output_dir, trades, decisions, summary, live_decision, live_signals)
+    write_outputs(
+        output_dir, trades, decisions, summary, live_decision, live_signals, monthly
+    )
     LOG.info("adaptive outputs written to %s", output_dir)
     return output_dir
 
