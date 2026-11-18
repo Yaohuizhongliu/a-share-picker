@@ -1,33 +1,33 @@
 {
   "template": "trend_pullback",
-  "breadth": 0.4,
+  "breadth": 0.5,
   "sector_flow": -0.03,
-  "stock_flow": 0.03,
+  "stock_flow": -0.03,
   "max_vol_rank": 0.75,
   "momentum": 0.65,
   "pullback_rank": 0.45,
-  "horizon": 1,
+  "horizon": 3,
   "validation_sample_sufficient": true,
   "validation": {
-    "trades": 55,
-    "signal_days": 11,
-    "win_rate": 0.5636363636363636,
-    "mean_return": 0.010581902062254334,
-    "median_return": 0.007946539379474916,
-    "daily_sharpe": 9.355191601414786,
-    "max_drawdown": -0.013599999999999945,
-    "profit_factor": 1.9857407485941938
+    "trades": 35,
+    "signal_days": 7,
+    "win_rate": 0.5142857142857142,
+    "mean_return": 0.011737048530056214,
+    "median_return": 0.004689308176100628,
+    "daily_sharpe": 19.827872996911495,
+    "max_drawdown": 0.0,
+    "profit_factor": 1.8000381614047316
   },
-  "selection_objective": 0.010670337249402884,
+  "selection_objective": 0.012187058070407398,
   "test": {
-    "trades": 180,
-    "signal_days": 36,
-    "win_rate": 0.4444444444444444,
-    "mean_return": -0.003934304415849411,
-    "median_return": -0.005035058233819954,
-    "daily_sharpe": -3.9078686507114067,
-    "max_drawdown": -0.16212509307253153,
-    "profit_factor": 0.6584856111877323
+    "trades": 140,
+    "signal_days": 28,
+    "win_rate": 0.39285714285714285,
+    "mean_return": -0.004053570236454413,
+    "median_return": -0.016156071598074428,
+    "daily_sharpe": -3.2820679002667728,
+    "max_drawdown": -0.14945248344083395,
+    "profit_factor": 0.7435136397937213
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
@@ -35,10 +35,10 @@
     "trades": 195,
     "signal_days": 39,
     "win_rate": 0.30256410256410254,
-    "mean_return": -0.008063875235571652,
+    "mean_return": -0.00793850268567326,
     "median_return": -0.031600000000000024,
-    "daily_sharpe": -7.573328293384094,
-    "max_drawdown": -0.29567513747125873,
-    "profit_factor": 0.5855045259116886
+    "daily_sharpe": -7.437777629737143,
+    "max_drawdown": -0.29221365585373094,
+    "profit_factor": 0.5893021896409103
   }
 }

@@ -1,48 +1,48 @@
 {
   "july_september": {
-    "trades": 114,
-    "signal_days": 38,
-    "win_rate": 0.5,
-    "mean_return": 4.7455171221688804e-05,
-    "median_return": -0.0001848992594150709,
-    "daily_sharpe": 0.03845417276352895,
-    "max_drawdown": -0.0921690635218596,
-    "profit_factor": 1.0043540198858332,
-    "cash_days": 0
+    "trades": 61,
+    "signal_days": 21,
+    "win_rate": 0.5245901639344263,
+    "mean_return": 0.00031316124545330764,
+    "median_return": 0.0013761904761904655,
+    "daily_sharpe": 0.7884826605683439,
+    "max_drawdown": -0.049946014995184806,
+    "profit_factor": 1.0380653075590833,
+    "cash_days": 5
   },
   "monthly": [
     {
       "month": "2026-07",
-      "trades": 42,
-      "signal_days": 14,
-      "win_rate": 0.6428571428571429,
-      "mean_return": 0.0063247684236185115,
-      "median_return": 0.007523125851885571,
-      "daily_sharpe": 6.130427906448652,
-      "max_drawdown": -0.032268520857606564,
-      "profit_factor": 2.1253363801193865
+      "trades": 24,
+      "signal_days": 8,
+      "win_rate": 0.6666666666666666,
+      "mean_return": 0.0029559787356476797,
+      "median_return": 0.005001653283605069,
+      "daily_sharpe": 4.960553385621435,
+      "max_drawdown": -0.01979209733167986,
+      "profit_factor": 1.7739170472003138
     },
     {
       "month": "2026-08",
       "trades": 15,
       "signal_days": 5,
-      "win_rate": 0.26666666666666666,
-      "mean_return": -0.006752891912640847,
-      "median_return": -0.009007407407407197,
-      "daily_sharpe": -7.454527631297397,
-      "max_drawdown": -0.021823960801775732,
-      "profit_factor": 0.48197836375020786
+      "win_rate": 0.4,
+      "mean_return": -0.003853085208290573,
+      "median_return": -0.006669708491761693,
+      "daily_sharpe": -3.6281934891302963,
+      "max_drawdown": -0.03779595924569912,
+      "profit_factor": 0.5802909082110586
     },
     {
       "month": "2026-09",
-      "trades": 57,
-      "signal_days": 19,
-      "win_rate": 0.45614035087719296,
-      "mean_return": -0.0027883685190016167,
-      "median_return": -0.010528571428571398,
-      "daily_sharpe": -1.985073204310102,
-      "max_drawdown": -0.08903538354435614,
-      "profit_factor": 0.8040020443570229
+      "trades": 22,
+      "signal_days": 8,
+      "win_rate": 0.45454545454545453,
+      "mean_return": 0.0002707102018848213,
+      "median_return": -0.005439357063558868,
+      "daily_sharpe": 1.1449189361054608,
+      "max_drawdown": -0.03160000000000007,
+      "profit_factor": 1.0218579020838234
     }
   ],
   "latest_decision": {
@@ -52,19 +52,9 @@
     "walkforward_gate": false,
     "gate_reason": "full walk-forward edge is not sufficiently robust",
     "local_candidate": {
-      "strategy": "cross_sectional_reversal",
-      "horizon": 3,
-      "objective": 0.001003080881634254,
-      "lookback_metrics": {
-        "trades": 120,
-        "signal_days": 40,
-        "win_rate": 0.5166666666666667,
-        "mean_return": 0.0030776095253333582,
-        "median_return": 0.0009626179491587963,
-        "daily_sharpe": 2.45324118215674,
-        "max_drawdown": -0.08625157239114578,
-        "profit_factor": 1.267742051619086
-      }
+      "strategy": "cash",
+      "horizon": 1,
+      "objective": -999.0
     }
   }
 }
