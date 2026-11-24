@@ -2,10 +2,10 @@ Eastmoney industry list unavailable: Eastmoney industry boards failed after 2 at
 Shenwan industry mapping unavailable: Shenwan level-2 industry list failed after 3 attempts: index_realtime_sw 已在 1.20.44 更名为 index_spot_sw，请改用 ak.index_spot_sw；参数与返回的列也可能有调整，用 ak.interface_info("index_spot_sw") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 using versioned Shenwan fallback: 4982 stocks
 688836 宇树科技-W: only 30 daily rows
-688801 燧原科技-U: only 13 daily rows
 688826 频准激光: only 31 daily rows
 301716 鸿富诚: only 2 daily rows
 301717 超纯应材: only 36 daily rows
+688801 燧原科技-U: only 13 daily rows
 688835 高凯技术: only 26 daily rows
 001232 嘉立创: only 41 daily rows
 301583 托伦斯: only 58 daily rows
@@ -13,14 +13,14 @@ using versioned Shenwan fallback: 4982 stocks
 688827 钶锐锶: Tencent returned no usable rows | Sina: Sina daily 688827 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 688828 国仪公司-U: only 36 daily rows
 301707 展芯股份: only 38 daily rows
-301718 通则康威: Tencent returned no usable rows | Sina: Sina daily 301718 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 603448 天博智能: only 17 daily rows
+301718 通则康威: Tencent returned no usable rows | Sina: Sina daily 301718 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 301689 电科思仪: only 14 daily rows
 301677 欣兴工具: only 44 daily rows
 688825 长鑫科技: only 47 daily rows
 001381 皇冠新材: Tencent returned no usable rows | Sina: Sina daily 001381 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
-301660 粤芯半导体-U: Tencent returned no usable rows | Sina: Sina daily 301660 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 688837 信诺维: only 10 daily rows
+301660 粤芯半导体-U: Tencent returned no usable rows | Sina: Sina daily 301660 failed after 2 attempts: stock_zh_a_daily 已在 1.20.46 更名为 stock_zh_a_hist_sina，请改用 ak.stock_zh_a_hist_sina；参数与返回的列也可能有调整，用 ak.interface_info("stock_zh_a_hist_sina") 查看。完整对照见 https://akshare.akfamily.xyz/changelog.html#changelog-rename
 301688 格林生物: only 20 daily rows
 301699 洛轴股份: only 15 daily rows
 301697 贝特利: only 21 daily rows
