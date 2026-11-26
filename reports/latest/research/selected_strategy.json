@@ -24,9 +24,9 @@
     "trades": 140,
     "signal_days": 28,
     "win_rate": 0.39285714285714285,
-    "mean_return": 0.0010694853203405022,
+    "mean_return": 0.0010694853203405028,
     "median_return": -0.03159999999999991,
-    "daily_sharpe": 0.7201817881152214,
+    "daily_sharpe": 0.7201817881152222,
     "max_drawdown": -0.10827997417438406,
     "profit_factor": 1.0567142479743796
   },
