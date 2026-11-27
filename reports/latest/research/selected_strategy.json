@@ -5,41 +5,41 @@
   "stock_flow": -0.03,
   "max_vol_rank": 1.0,
   "momentum": 0.35,
-  "breakout": -0.05,
+  "breakout": 0.0,
   "volume_ratio": 0.8,
   "horizon": 3,
   "validation_sample_sufficient": true,
   "validation": {
     "trades": 35,
     "signal_days": 7,
-    "win_rate": 0.45714285714285713,
-    "mean_return": 0.00954285714285715,
-    "median_return": -0.031600000000000024,
-    "daily_sharpe": 8.847876145194489,
+    "win_rate": 0.4857142857142857,
+    "mean_return": 0.012114285714285723,
+    "median_return": -0.03159999999999991,
+    "daily_sharpe": 10.947632925279628,
     "max_drawdown": -0.013600000000000056,
-    "profit_factor": 1.556295802798134
+    "profit_factor": 1.7454289732770738
   },
-  "selection_objective": 0.009523931093556681,
+  "selection_objective": 0.01214264295760499,
   "test": {
     "trades": 140,
     "signal_days": 28,
-    "win_rate": 0.39285714285714285,
-    "mean_return": 0.0010694853203405028,
-    "median_return": -0.03159999999999991,
-    "daily_sharpe": 0.7201817881152222,
-    "max_drawdown": -0.10827997417438406,
-    "profit_factor": 1.0567142479743796
+    "win_rate": 0.35,
+    "mean_return": -0.0018784332527147889,
+    "median_return": -0.031600000000000024,
+    "daily_sharpe": -1.2860092483062737,
+    "max_drawdown": -0.14429267378938682,
+    "profit_factor": 0.9070054354149911
   },
   "baseline_selected_horizon": 1,
   "baseline_validation": {
     "horizon": 1,
     "trades": 195,
     "signal_days": 39,
-    "win_rate": 0.30256410256410254,
-    "mean_return": -0.00793850268567326,
+    "win_rate": 0.2923076923076923,
+    "mean_return": -0.008381210804278647,
     "median_return": -0.031600000000000024,
-    "daily_sharpe": -7.437777629737143,
-    "max_drawdown": -0.29221365585373094,
-    "profit_factor": 0.5893021896409103
+    "daily_sharpe": -7.876167985849946,
+    "max_drawdown": -0.30440506548813884,
+    "profit_factor": 0.5727951541076125
   }
 }
